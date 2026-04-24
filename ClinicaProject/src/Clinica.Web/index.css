@@ -165,7 +165,7 @@ dialog {
 }
 
 .toast.show {
-    right: 20px;        /* Move para dentro da tela quando ativado */
+    right: 20px;     
 }
 
 .toast-content {

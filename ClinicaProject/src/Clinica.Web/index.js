@@ -1,12 +1,14 @@
 window.onload = function() {
-    // 1. DECLARAÇÃO DE VARIÁVEIS
     const btnAbrir = document.getElementById("btnAbrir");
     const btnFechar = document.getElementById("btnFechar");
     const modal = document.getElementById("modalAgenda");
     const modalSucesso = document.getElementById("modalSucesso");
     const btnConfirmar = document.getElementById("confirmarAgendamento");
     
-    const selectTerapeuta = document.getElementById('selectTerapeuta');
+    // Selects
+    const selectPrincipal = document.getElementById('selectTerapeutaPrincipal');
+    const selectTerapeutaModal = document.getElementById('selectTerapeuta');
+    
     const inputData = document.getElementById('dataAgendamento');
     const containerHorarios = document.getElementById('containerHorarios');
     const textoResumo = document.getElementById('textoResumo');
@@ -18,11 +20,22 @@ window.onload = function() {
     let agendamentoFinal = { terapeuta: '', data: '', hora: '' };
     let toastTimeout;
 
-    // 2. ABRIR E FECHAR MODAL PRINCIPAL
-    if (btnAbrir) btnAbrir.onclick = () => modal.showModal();
+    // 2. ABRIR E FECHAR MODAL (Com sincronização)
+    if (btnAbrir) {
+        btnAbrir.onclick = () => {
+            // Sincroniza o valor do select de fora para dentro do modal
+            if (selectPrincipal && selectTerapeutaModal) {
+                selectTerapeutaModal.value = selectPrincipal.value;
+                // Dispara a busca de horários caso já tenha data preenchida
+                buscarHorarios(selectTerapeutaModal.value, inputData.value);
+            }
+            modal.showModal();
+        };
+    }
+    
     if (btnFechar) btnFechar.onclick = () => modal.close();
 
-    // 3. BUSCAR HORÁRIOS DINAMICAMENTE
+    // 3. BUSCAR HORÁRIOS
     async function buscarHorarios(terapeuta, data) {
         if (!terapeuta || !data) return;
         containerHorarios.innerHTML = "<p>Carregando horários...</p>";
@@ -41,7 +54,7 @@ window.onload = function() {
                     this.classList.add('selecionado');
                     
                     agendamentoFinal.hora = horario;
-                    agendamentoFinal.terapeuta = selectTerapeuta.options[selectTerapeuta.selectedIndex].text;
+                    agendamentoFinal.terapeuta = selectTerapeutaModal.options[selectTerapeutaModal.selectedIndex].text;
                     agendamentoFinal.data = inputData.value.split('-').reverse().join('/');
                     
                     textoResumo.innerText = `Selecionado: ${horario}`;
@@ -53,12 +66,12 @@ window.onload = function() {
         }
     }
 
-    if (selectTerapeuta && inputData) {
-        selectTerapeuta.onchange = () => buscarHorarios(selectTerapeuta.value, inputData.value);
-        inputData.onchange = () => buscarHorarios(selectTerapeuta.value, inputData.value);
+    if (selectTerapeutaModal && inputData) {
+        selectTerapeutaModal.onchange = () => buscarHorarios(selectTerapeutaModal.value, inputData.value);
+        inputData.onchange = () => buscarHorarios(selectTerapeutaModal.value, inputData.value);
     }
 
-    // 4. LÓGICA DO TOAST (AVISO FLUTUANTE)
+    // 4. LÓGICA DO TOAST
     window.mostrarToast = function() {
         if (!toast) return;
         toast.classList.add("show");
@@ -67,13 +80,8 @@ window.onload = function() {
 
     function iniciarTimerToast() {
         clearTimeout(toastTimeout);
-        toastTimeout = setTimeout(() => {
-            fecharToast();
-        }, 3000);
-        
-        if (progressBar) {
-            progressBar.classList.remove('pausar-animacao');
-        }
+        toastTimeout = setTimeout(() => fecharToast(), 3000);
+        if (progressBar) progressBar.classList.remove('pausar-animacao');
     }
 
     window.fecharToast = function() {
@@ -83,32 +91,18 @@ window.onload = function() {
         }
     }
 
-    // Eventos de Mouse: Pausar e Retomar
-    if (toast) {
-        toast.onmouseenter = () => {
-            clearTimeout(toastTimeout);
-            if (progressBar) {
-                progressBar.classList.add('pausar-animacao');
-            }
-        };
-
-        toast.onmouseleave = () => {
-            iniciarTimerToast();
-        };
-    }
-
     // 5. BOTÃO CONFIRMAR
     if (btnConfirmar) {
         btnConfirmar.onclick = function() {
             const botaoHoraAtivo = document.querySelector('.btn-hora.selecionado');
 
-            if (selectTerapeuta.value === "" || inputData.value === "" || !botaoHoraAtivo) {
+            if (selectTerapeutaModal.value === "" || inputData.value === "" || !botaoHoraAtivo) {
                 mostrarToast(); 
                 return;
             }
 
             dadosConfirmados.innerHTML = `
-                <p><strong>Terapeuta:</strong> ${agendamentoFinal.terapeuta}</p>
+                <p><strong>Terapeuta/Médico:</strong> ${agendamentoFinal.terapeuta}</p>
                 <p><strong>Data:</strong> ${agendamentoFinal.data}</p>
                 <p><strong>Horário:</strong> ${agendamentoFinal.hora}</p>
             `;

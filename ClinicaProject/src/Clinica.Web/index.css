@@ -1,216 +1,202 @@
-*{
-    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-}
-div.titulo{
-    margin: auto;
-    padding: auto;
-    font-size: 30px;
-    align-items: center;
-    justify-items: center;
-    display: flex;
-    place-items: center;
-    
-}
-.Agendamento{
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    width: 100%;
-}
-
-.paciente{
-    padding: 10px;
-    width: 400px;
-    height: 300px;
-    background-color: rgb(212, 212, 212);
-    border: 2px solid #333;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px;
-    border-radius: 10px;
-    box-sizing: border-box; 
-}
-.terapeuta{
-    padding: auto;
-    margin-left: auto;
-    background-color: rgb(212, 212, 212);
-    width: 400px;
-    height: 300px;
-    border: 2px solid #333;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    border-radius: 10px;
+/* 1. RESET E TIPOGRAFIA */
+* {
+    margin: 0;
+    padding: 0;
     box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
-button{
-    
-    border: 2px solid black;
-    border-radius: 10px;
-    background-color: rgb(187, 187, 187);
 
+body {
+    background-color: #f0f2f5;
+    color: #333;
+    padding: 40px;
 }
-dialog {
-    background-color: white !important;
-    color: black !important;
+
+/* 2. TÍTULO PRINCIPAL */
+div.titulo {
+    font-size: 32px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    margin-bottom: 40px;
+    display: block;
+}
+
+/* 3. LAYOUT PRINCIPAL */
+.Agendamento {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap; /* Ajusta em telas menores */
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* 4. CARDS (PACIENTE E TERAPEUTA) */
+.paciente, .terapeuta {
+    background-color: #ffffff;
+    width: 380px;
+    min-height: 280px;
     border: none;
-    border-radius: 15px;
-    padding: 20px;
-    width: 350px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); /* Sombra suave igual ao login */
+    transition: transform 0.3s ease;
 }
 
-.passo { 
-    margin-top: 15px; text-align: left; 
+.paciente:hover, .terapeuta:hover {
+    transform: translateY(-5px);
 }
 
-.input-estilizado {
+.paciente h2, .terapeuta h2 {
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 22px;
+}
+
+.paciente p {
+    color: #666;
+    margin: 5px 0;
+    font-size: 16px;
+}
+
+/* 5. INPUTS E SELECTS */
+select, .input-estilizado {
     width: 100%;
-    padding: 8px;
-    margin-top: 5px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #fff;
+    outline: none;
+    margin-bottom: 20px;
+    transition: border 0.3s;
 }
 
+select:focus, .input-estilizado:focus {
+    border-color: #A7C27E;
+}
+
+/* 6. BOTÕES */
+button {
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+/* Botão da tela principal */
+#btnAbrir {
+    background-color: #A7C27E;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 10px;
+    font-size: 16px;
+    width: 100%;
+}
+
+#btnAbrir:hover {
+    background-color: #8da66a;
+}
+
+/* 7. MODAIS (DIALOG) */
+dialog {
+    border: none;
+    border-radius: 20px;
+    padding: 30px;
+    width: 400px;
+    margin: auto;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+}
+
+dialog::backdrop {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+}
+
+.passo label {
+    font-weight: 600;
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 8px;
+    display: block;
+}
+
+/* 8. GRADE DE HORÁRIOS */
 .horarios-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-top: 10px;
+    grid-template-columns: repeat(3, 1fr); /* 3 colunas para ficar mais moderno */
+    gap: 12px;
+    margin: 20px 0;
 }
 
 .btn-hora {
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    cursor: pointer;
+    padding: 10px;
+    border: 1px solid #eee;
+    background: #f8f9fa;
+    border-radius: 8px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.btn-hora:hover {
+    background: #e9ecef;
 }
 
 .btn-hora.selecionado {
-    background-color: #0d1117;
+    background-color: #A7C27E !important;
     color: white;
-}
-#modalSucesso {
-    border: none;
-    border-radius: 15px;
-    width: 300px;
-    background-color: white;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    border-color: #A7C27E;
 }
 
-#modalSucesso::backdrop {
-    background: rgba(0, 0, 0, 0.7);
-}
-.campo-erro {
-    border: 2px solid red !important;
-}
-#modalErro {
-    border: none;
-    border-radius: 15px;
-    width: 320px;
-    padding: 0;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-}
-
-.modal-erro-content {
-    padding: 30px;
+/* 9. RESUMO E BOTÕES DO MODAL */
+.resumo-final {
+    margin-top: 25px;
     text-align: center;
-    background-color: white;
 }
 
-.icone-erro {
-    font-size: 50px;
-    margin-bottom: 10px;
-}
-
-#modalErro h2 {
-    color: #d9534f; /* Vermelho aviso */
-    margin-bottom: 15px;
-}
-
-#modalErro p {
-    color: #555;
-    line-height: 1.5;
+#textoResumo {
+    font-size: 14px;
+    color: #777;
     margin-bottom: 20px;
 }
 
-#btnFecharErro {
-    background-color: #d9534f;
+.btn-confirmar {
+    background-color: #A7C27E;
     color: white;
     border: none;
     padding: 12px 25px;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
+    border-radius: 10px;
     width: 100%;
+    margin-bottom: 10px;
 }
 
-#modalErro::backdrop {
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(3px); /* Efeito de desfoque no fundo */
+#btnFechar {
+    background: transparent !important;
+    color: #ff4d4d !important;
+    border: none !important;
+    font-size: 14px;
+    text-decoration: underline;
 }
+
+/* 10. TOAST (ERRO) */
 .toast {
     position: fixed;
-    bottom: 20px;       /* 20px de distância do fundo da tela */
-    right: -400px;      /* Começa escondido à direita */
-    background: #222;
-    color: white;
-    padding: 15px;
-    border-radius: 4px;
-    width: 320px;
-    transition: all 0.5s ease;
-    overflow: hidden;
-    z-index: 10000;
+    bottom: 20px;
+    right: -450px;
+    background: #333;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
 
 .toast.show {
-    right: 20px;     
+    right: 20px;
 }
 
-.toast-content {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.toast-message p {
-    font-size: 13px;
-    color: #ccc;
-    margin: 5px 0 0;
-}
-
-.toast-close {
-    margin-left: auto;
-    cursor: pointer;
-    font-size: 10px;
-    opacity: 0.7;
-}
-
-/* A barrinha vermelha de progresso */
-/* Estilo da barra */
 .toast-progress {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    height: 4px;
-    background: #d9534f;
-    width: 100%;
+    background: #A7C27E; /* Barra verde no erro para combinar com o tema */
 }
 
-/* Quando o toast aparece, a animação começa */
-.toast.show .toast-progress {
-    animation: diminuirBarra 3s linear forwards;
-}
-
-/* O segredo: Esta classe será controlada pelo JS */
-.pausar-animacao {
-    animation-play-state: paused !important;
-}
-
-@keyframes diminuirBarra {
-    from { width: 100%; }
-    to { width: 0%; }
-}

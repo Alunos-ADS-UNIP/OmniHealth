@@ -1,11 +1,45 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Cadastro - Sistema de Agendamento</title>
+    <link rel="stylesheet" href="cadastro.css">
 </head>
 <body>
-    
+    <div class="login-container">
+        <form class="login-box">
+            <h2>Criar Conta</h2>
+            <p>Preencha os dados abaixo</p>
+
+            <div class="input-group">
+                <label for="nomeCadastro">Nome Completo</label>
+                <input type="text" id="nomeCadastro" placeholder="Seu nome" class="input-estilizado">
+            </div>
+
+          <div class="input-group">
+    <div class="passo">
+       <div class="input-group">
+    <label for="cpfCadastro">CPF</label>
+    <input type="text" id="cpfCadastro" placeholder="000.000.000-00" maxlength="14" class="input-estilizado">
+</div>
+
+    </div>
+</div>
+
+
+            <div class="input-group">
+                <label for="senhaCadastro">Senha</label>
+                <input type="password" id="senhaCadastro" placeholder="Mínimo 6 caracteres" class="input-estilizado">
+            </div>
+
+            <button type="button" id="btnCadastrar" class="btn-auth">Cadastrar</button>
+            
+            <div class="auth-footer">
+                <span>Já tem conta? <a href="./login.html">Fazer Login</a></span>
+            </div>
+        </form>
+    </div>
+    <script src="cadastro.js"></script>
 </body>
 </html>

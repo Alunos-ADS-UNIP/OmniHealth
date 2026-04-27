@@ -1,282 +1,308 @@
 /* ============================================================
-   1. DESIGN SYSTEM - FISIOTERAPIA (CORES E TOKENS)
+   1. DESIGN SYSTEM & TOKENS
 ============================================================ */
 :root {
-    --primary-grad: linear-gradient(135deg, #0d9488 0%, #2dd4bf 100%);
-    --success-grad: linear-gradient(135deg, #10b981 0%, #34d399 100%);
-    --primary-solid: #0d9488;
-    --primary-light: #ccfbf1;
-    
-    --bg: #f0fdfa;
+    --brand: oklch(65% 0.18 180);        
+    --brand-soft: oklch(95% 0.05 180);
+    --success: #22c55e;
+    --error: #ff4d4d;
+    --bg-app: #f8fafc;
     --branco: #ffffff;
-    --text-main: #134e4a;
-    --text-light: #5f7d7b;
-    
-    --radius-lg: 24px;
-    --radius-md: 14px;
-    --shadow-color: rgba(13, 148, 136, 0.15);
-    --shadow-vibrant: 0 20px 40px -10px var(--shadow-color);
-    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --texto: #0f172a;
+    --texto-muted: #64748b;
+    --radius: 24px;
+    --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    --shadow-soft: 0 10px 30px -10px rgba(0,0,0,0.05);
 }
 
-/* ============================================================
-   2. RESET & LAYOUT
-============================================================ */
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+* { box-sizing: border-box; }
 
+/* ============================================================
+   2. LAYOUT BASE & NAVBAR
+============================================================ */
 body {
-    background: radial-gradient(circle at top right, #e2f2f0, var(--bg));
-    color: var(--text-main);
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background: radial-gradient(at top left, #f1f5f9, var(--bg-app));
+    color: var(--texto);
+    min-height: 100vh;
+}
+
+.navbar {
+    padding: 1.5rem 4rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid #e2e8f0;
+    position: sticky;
+    top: 0; z-index: 100;
+}
+
+.logo { font-weight: 900; color: var(--brand); font-size: 1.3rem; text-decoration: none; }
+
+/* MENU PERFIL (DROPDOWN ORGANIZADO) */
+.perfil-container { position: relative; cursor: pointer; }
+
+.avatar {
+    width: 45px; height: 45px;
+    background: var(--brand);
+    color: white;
+    border-radius: 50%;
+    display: grid; place-items: center;
+    font-weight: 800;
+    box-shadow: 0 4px 12px var(--brand-soft);
+}
+
+.dropdown-conta {
+    position: absolute;
+    top: 120%; right: 0;
+    width: 260px;
+    background: var(--branco);
+    border-radius: 20px;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
+    padding: 1rem; /* Padding reduzido para os links encostarem nas bordas no hover */
+    opacity: 0; visibility: hidden;
+    transform: translateY(10px);
+    transition: var(--transition);
+    border: 1px solid #e2e8f0;
+}
+
+.perfil-container:hover .dropdown-conta {
+    opacity: 1; visibility: visible;
+    transform: translateY(0);
+}
+
+/* Informações do Usuário no Topo do Dropdown */
+.user-header {
+    padding: 0.5rem 0.5rem 1rem 0.5rem;
     display: flex;
     flex-direction: column;
+}
+
+.user-header strong { font-size: 1rem; color: var(--texto); }
+.user-header span { font-size: 0.85rem; color: var(--texto-muted); }
+
+.dropdown-conta hr {
+    border: 0;
+    border-top: 1px solid #f1f5f9;
+    margin: 0.5rem 0;
+}
+
+/* Estilização dos Links do Menu */
+.dropdown-conta a {
+    display: flex;
     align-items: center;
-    padding: 60px 20px;
-    min-height: 100vh;
-    -webkit-font-smoothing: antialiased;
+    gap: 12px;
+    padding: 12px 10px;
+    color: var(--texto);
+    text-decoration: none !important; /* Remove o sublinhado roxo */
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 12px;
+    transition: 0.2s;
 }
 
-.titulo-pagina {
-    font-size: 2rem;
-    font-weight: 850;
-    margin-bottom: 50px;
-    letter-spacing: -1px;
-    background: var(--primary-grad);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+.dropdown-conta a:hover {
+    background: var(--brand-soft);
+    color: var(--brand);
 }
 
-.Agendamento {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 30px;
-    width: 100%;
-    max-width: 1100px;
-}
+/* Cor especial para o botão Sair */
+.dropdown-conta a.logout { color: var(--error); }
+.dropdown-conta a.logout:hover { background: #fff5f5; }
 
 /* ============================================================
-   3. CARDS (ESTILO CLÍNICO)
+   3. CARDS DE AGENDAMENTO
 ============================================================ */
-.card-info {
+.container-agendamento { padding: 4rem; max-width: 1200px; margin: 0 auto; }
+.titulo-sessao { font-size: 2.5rem; font-weight: 900; text-align: center; margin-bottom: 3rem; letter-spacing: -1.5px; color: var(--brand); }
+
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2.5rem;
+}
+
+.card-moderno {
     background: var(--branco);
-    padding: 35px;
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-vibrant);
-    border: 1px solid rgba(255, 255, 255, 0.7);
+    padding: 3rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-soft);
+    border: 1px solid #ffffff;
     transition: var(--transition);
-    position: relative;
-    overflow: hidden;
 }
 
-.card-info:hover {
-    transform: translateY(-8px);
-}
+.card-moderno:hover { transform: translateY(-8px); box-shadow: 0 30px 60px -20px rgba(0,0,0,0.1); border-color: var(--brand); }
 
-.card-info::before {
-    content: "";
-    position: absolute;
-    top: 0; left: 0; width: 6px; height: 100%;
-    background: var(--primary-grad);
-}
-
-.badge-status {
-    background: var(--primary-light);
-    color: #0f766e;
-    padding: 5px 14px;
-    border-radius: 20px;
-    font-size: 0.75rem;
+.badge {
+    background: var(--brand-soft);
+    color: var(--brand);
+    padding: 6px 14px;
+    border-radius: 100px;
+    font-size: 0.7rem;
     font-weight: 800;
     text-transform: uppercase;
     display: inline-block;
-    margin-bottom: 15px;
-    border: 1px solid #99f6e4;
+    margin-bottom: 1.5rem;
 }
 
 /* ============================================================
-   4. INPUTS E BOTÕES
+   4. FORMULÁRIOS (INPUTS E BOTÕES)
 ============================================================ */
-.input-moderno {
+.select-premium, .input-premium {
     width: 100%;
-    padding: 14px 18px;
-    border-radius: var(--radius-md);
-    border: 2px solid #e2e8f0;
-    background: #fff;
+    padding: 16px;
+    border-radius: 16px;
+    border: 2px solid #f1f5f9;
+    background: #f8fafc;
     font-size: 1rem;
     font-weight: 600;
+    outline: none;
     transition: var(--transition);
-    margin-bottom: 15px;
-    color: var(--text-main);
 }
 
-.btn-primario {
-    background: var(--primary-grad);
-    color: white;
+.select-premium:focus, .input-premium:focus { border-color: var(--brand); background: #fff; }
+
+.btn-agendar-main, .btn-confirmar-full {
+    width: 100%;
+    padding: 1.2rem;
+    border-radius: 18px;
     border: none;
-    padding: 16px 30px;
-    border-radius: var(--radius-md);
-    font-weight: 700;
+    background: var(--brand);
+    color: white !important;
+    font-weight: 800;
+    font-size: 1.1rem;
     cursor: pointer;
     transition: var(--transition);
+    box-shadow: 0 10px 20px -5px var(--brand-soft);
+    text-decoration: none;
+    display: flex; justify-content: center; align-items: center;
+}
+
+.btn-agendar-main:hover, .btn-confirmar-full:hover { transform: scale(1.02); filter: brightness(1.1); }
+
+.btn-outline-full {
+    width: 100%;
+    padding: 1rem;
+    border-radius: 18px;
+    border: 2px solid #e2e8f0;
+    background: transparent;
+    color: var(--texto-muted) !important;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+    text-decoration: none;
+    display: flex; justify-content: center; align-items: center;
 }
 
 /* ============================================================
-   5. MODAIS E TOAST INTERNO (SEM BORRÃO)
+   5. SISTEMA DE POPUPS (MODAIS)
 ============================================================ */
-.modal-moderno {
-    border: none;
-    border-radius: 20px;
-    padding: 0;
-    width: 95%;
-    max-width: 550px;
-    margin: auto;
-    position: relative; /* Necessário para o toast interno se posicionar */
-    box-shadow: 0 40px 100px -20px rgba(0,0,0,0.3);
-}
-
-.modal-moderno::backdrop {
-    background: rgba(19, 78, 74, 0.4);
+dialog::backdrop {
+    background: rgba(15, 23, 42, 0.6);
     backdrop-filter: blur(10px);
+    z-index: 999;
 }
 
-/* TOAST INTERNO: Aparece dentro do Modal, nítido e sem borrão */
-.toast-interno {
-    position: absolute;
-    top: 15px;
+.modal-moderno {
+    margin: 0;
+    border: none;
+    padding: 2.5rem;
+    position: fixed;
+    top: 50%; 
     left: 50%;
-    transform: translateX(-50%) translateY(-20px);
+    transform: translate(-50%, -50%);
     width: 90%;
-    background: white;
-    padding: 12px 20px;
-    border-radius: 16px;
-    display: none; /* Controlado pelo JS */
-    align-items: center;
-    gap: 12px;
-    z-index: 100;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    border: 1px solid #fee2e2;
-    transition: var(--transition);
+    max-width: 480px;
+    background: var(--branco);
+    border-radius: 32px;
+    box-shadow: 0 40px 100px -20px rgba(0,0,0,0.3);
+    z-index: 1000;
 }
 
-.toast-visible {
-    display: flex !important;
-    transform: translateX(-50%) translateY(0);
-    animation: shake 0.4s ease-in-out;
+dialog[open].modal-moderno {
+    animation: modalShow 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.modal-header { padding: 35px; background: var(--primary-grad); color: white; text-align: center; }
-.modal-body { padding: 35px; }
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+.modal-header h2 { font-size: 1.5rem; font-weight: 900; margin: 0; }
+.btn-fechar-x { all: unset; font-size: 1.8rem; cursor: pointer; color: var(--texto-muted); line-height: 1; }
 
-.horarios-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    margin-top: 15px;
-}
-
+.horarios-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
 .btn-hora {
+    padding: 12px; border-radius: 12px; border: 1px solid #f1f5f9;
+    background: #f8fafc; cursor: pointer; font-weight: 700; transition: 0.2s;
+}
+.btn-hora:hover { border-color: var(--brand); }
+.btn-hora.active { background: var(--brand); color: white; border-color: var(--brand); }
+
+/* ============================================================
+   6. FEEDBACKS (TOAST & ERROS)
+============================================================ */
+.toast-erro {
+    position: fixed;
+    top: 30px; left: 50%;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-50%) translateY(-100px); 
+    background: var(--error);
+    color: white;
+    padding: 16px 32px;
+    border-radius: 100px;
+    font-weight: 700;
+    box-shadow: 0 15px 30px rgba(255, 77, 77, 0.3);
+    z-index: 10000;
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+.toast-erro.show { 
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0); 
+}
+
+.mensagem-error-modal {
+    position: relative;
+    z-index: 1100;
+    background: #fff5f5;
+    color: var(--error);
     padding: 12px;
     border-radius: 12px;
-    border: 2px solid #f1f5f9;
-    background: #fff;
-    cursor: pointer;
+    border: 1px solid #ffcccc;
+    font-size: 0.85rem;
     font-weight: 700;
-    color: var(--text-light);
-}
-
-.btn-hora.selecionado {
-    background: var(--primary-solid);
-    color: white;
-    border-color: var(--primary-solid);
-}
-
-/* ============================================================
-   6. SUCESSO E ANIMAÇÕES
-============================================================ */
-/* Container de Resumo Modernizado */
-/* Container Principal do Modal de Sucesso */
-.modal-moderno.success-variant {
-    padding: 50px 40px; /* Aumentei o espaço interno (cima/baixo e lados) */
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Centraliza tudo horizontalmente */
+    margin-bottom: 15px;
     text-align: center;
 }
 
-/* Ícone de Check centralizado e com espaço */
-.icon-check {
-    margin-bottom: 25px;
-    box-shadow: 0 10px 20px rgba(16, 185, 129, 0.2);
+@keyframes modalShow {
+    from { opacity: 0; transform: translate(-50%, -48%) scale(0.96); }
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 }
 
-/* Título da Sessão */
-.modal-moderno h2 {
-    margin-bottom: 30px;
-    font-size: 1.8rem;
-    color: var(--text-main);
+.shake { animation: shakeAnim 0.4s ease-in-out; }
+@keyframes shakeAnim {
+    0%, 100% { transform: translate(-50%, -50%) translateX(0); }
+    25% { transform: translate(-50%, -50%) translateX(-8px); }
+    75% { transform: translate(-50%, -50%) translateX(8px); }
 }
 
-/* Ajuste no Quadro de Resumo (Onde estão os dados) */
-.resumo-sucesso {
-    width: 100%; /* Garante que ocupe a largura disponível com respiro */
-    max-width: 420px; /* Evita que fique largo demais em telas grandes */
-    background: var(--branco);
-    padding: 35px;
-    border-radius: 24px;
-    border: 1px solid #e2f2f0;
-    box-shadow: var(--shadow-vibrant);
-    margin-bottom: 40px; /* Espaço generoso antes do botão */
-    
-    /* Alinhamento interno dos itens */
-    display: flex;
-    flex-direction: column;
-    gap: 25px; /* Espaçamento entre as linhas (Paciente, Médico, etc) */
+footer button, .body-footer-button { display: none !important; }
+/* Estilo para o botão de hora quando estiver bloqueado pelo terapeuta */
+.btn-hora.ocupado {
+    background: #f1f5f9 !important;
+    color: #cbd5e1 !important;
+    border: 1px dashed #cbd5e1 !important;
+    cursor: not-allowed;
+    opacity: 0.7;
 }
 
-/* Estilo de cada linha de informação */
-.resumo-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Centraliza o texto de cada info */
-    gap: 8px;
-}
-
-.resumo-item strong {
-    font-size: 0.75rem;
-    letter-spacing: 1.5px;
-    color: var(--text-light); /* Cor mais suave para o rótulo */
-}
-
-.resumo-item p {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--primary-solid); /* Destaque na cor da fisioterapia */
-}
-.modal-moderno.success-variant .btn-primario {
-    width: 100%;
-    max-width: 300px; /* Botão centralizado e não tão largo */
-    padding: 18px;
-    border-radius: 18px;
-    font-size: 1rem;
-}
-/* No seu CSS, remova qualquer display fixo do dialog de sucesso */
-#modalSucesso {
-    display: none; /* Oculta por padrão */
-}
-
-/* Quando o navegador abre o dialog pelo JS, ele usa display: block internamente */
-#modalSucesso[open] {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
+/* Opcional: Feedback visual de erro no modal */
+.shake { animation: shake 0.4s; }
 @keyframes shake {
-    0%, 100% { transform: translateX(-50%); }
-    25% { transform: translateX(-52%); }
-    75% { transform: translateX(-48%); }
-}
-
-@keyframes slideIn {
-    from { transform: translateX(100%); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
 }

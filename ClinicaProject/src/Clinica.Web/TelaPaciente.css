@@ -1,126 +1,120 @@
+/* ============================================================
+   1. DESIGN SYSTEM & TOKENS (UNIFICADO)
+============================================================ */
 :root {
-    --primary: #0d9488;
-    --primary-light: #ccfbf1;
-    --bg-paciente: #f0fdfa;
-    --text: #134e4a;
-    --white: #ffffff;
-    --shadow: 0 10px 30px rgba(13, 148, 136, 0.1);
+    --brand: oklch(65% 0.18 180);        /* Ciano moderno do seu sistema */
+    --brand-soft: oklch(95% 0.05 180);
+    --success: #22c55e;
+    --error: #ff4d4d;
+    --bg-app: #f8fafc;
+    --branco: #ffffff;
+    --texto: #0f172a;
+    --texto-muted: #64748b;
+    --radius: 24px;
+    --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    --shadow-soft: 0 10px 30px -10px rgba(0,0,0,0.05);
 }
 
+/* Reset de layout para centralizar a tela do paciente */
 body {
-    background: var(--bg-paciente);
+    margin: 0;
     font-family: 'Inter', system-ui, sans-serif;
-    color: var(--text);
-    display: flex;
-    justify-content: center;
-    padding: 40px 20px;
+    background: radial-gradient(at top left, #f1f5f9, var(--bg-app));
+    color: var(--texto);
+    min-height: 100vh;
 }
 
-/* Card do Paciente */
-.card-info {
-    background: var(--white);
-    padding: 40px;
-    border-radius: 32px;
-    box-shadow: var(--shadow);
-    max-width: 500px;
-    width: 100%;
-    text-align: center;
-    border: 1px solid rgba(255, 255, 255, 0.6);
-}
-
-.titulo-pagina {
-    font-size: 1.8rem;
+/* ============================================================
+   2. BOTÃO DE ATALHO (NOVO)
+============================================================ */
+.btn-agendar-atalho {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--brand-soft);
+    color: var(--brand) !important;
+    text-decoration: none !important;
+    padding: 10px 24px;
+    border-radius: 100px;
     font-weight: 800;
-    background: linear-gradient(135deg, #0d9488, #2dd4bf);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 30px;
+    font-size: 0.9rem;
+    transition: var(--transition);
+    border: 1.5px solid var(--brand);
+    margin-top: 1rem;
+    box-shadow: 0 4px 12px var(--brand-soft);
 }
 
-/* Grid de Horários do Paciente */
+.btn-agendar-atalho span {
+    font-size: 1.4rem;
+    line-height: 1;
+    margin-top: -2px; /* Ajuste fino do símbolo de + */
+}
+
+.btn-agendar-atalho:hover {
+    background: var(--brand);
+    color: white !important;
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 10px 20px -5px var(--brand-soft);
+}
+
+/* ============================================================
+   3. GRID E CARDS DE CONSULTA
+============================================================ */
+.card-consulta-item {
+    border-left: 6px solid var(--brand);
+    animation: cardFade 0.5s ease-out;
+}
+
+@keyframes cardFade {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Grid de Horários dentro do Modal (se houver) */
 .horarios-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    margin: 20px 0;
-}
-
-.btn-hora {
-    padding: 14px;
-    border-radius: 16px;
-    border: 2px solid transparent;
-    font-weight: 700;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.btn-hora.disponivel {
-    background: var(--primary-light);
-    color: var(--primary);
-}
-
-.btn-hora.bloqueado {
-    background: #f1f5f9;
-    color: #94a3b8;
-    cursor: not-allowed;
-    opacity: 0.6;
-}
-
-.btn-hora.selecionado {
-    background: var(--primary);
-    color: white;
-    transform: scale(1.05);
-    box-shadow: 0 8px 15px rgba(13, 148, 136, 0.3);
-}
-
-/* Modal de Agendamento */
-.modal-moderno {
-    border: none;
-    border-radius: 28px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-}
-
-.modal-moderno::backdrop {
-    background: rgba(19, 78, 74, 0.4);
-    backdrop-filter: blur(8px);
-}
-:root {
-    --primary: #0d9488;
-    --bg: #f0fdfa;
-    --radius: 20px;
-}
-
-body { background: var(--bg); font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding: 50px; }
-
-.card-info { background: white; padding: 40px; border-radius: 32px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; width: 450px; }
-
-.modal-moderno { border: none; border-radius: var(--radius); width: 100%; max-width: 500px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
-.modal-moderno::backdrop { background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); }
-
-.input-moderno { width: 100%; padding: 12px; margin: 10px 0 20px; border-radius: 10px; border: 1px solid #ddd; }
-
-.horarios-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-.btn-hora { padding: 10px; border-radius: 10px; border: 2px solid transparent; cursor: pointer; font-weight: bold; }
-.btn-hora.disponivel { background: #dcfce7; color: #166534; }
-.btn-hora.bloqueado { background: #f1f5f9; color: #94a3b8; cursor: not-allowed; }
-.btn-hora.selecionado { border-color: var(--primary); }
-
-.btn-primario { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: bold; }
-.btn-cancelar { background: #fee2e2; color: #991b1b; border: none; padding: 15px; border-radius: 12px; cursor: pointer; }
-
-.resumo-sucesso { background: #f8fafc; padding: 20px; border-radius: 15px; margin-bottom: 25px; text-align: left; line-height: 1.8; }
-.horarios-grid {
-    display: grid;
-    /* Mudamos para 4 colunas para acomodar melhor os horários quebrados */
     grid-template-columns: repeat(4, 1fr); 
     gap: 8px;
-    max-height: 300px; /* Adiciona rolagem se o modal for pequeno */
-    overflow-y: auto;
     padding: 5px;
 }
 
-/* Ajuste para telas menores */
-@media (max-width: 400px) {
-    .horarios-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
+@media (max-width: 500px) {
+    .horarios-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ============================================================
+   4. MODAIS E STATUS
+============================================================ */
+.modal-moderno {
+    border: none;
+    border-radius: 32px;
+    padding: 2.5rem;
+    background: var(--branco);
+    box-shadow: 0 40px 100px -20px rgba(0,0,0,0.3);
+}
+
+.modal-moderno::backdrop {
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(10px);
+}
+
+/* Botão de desmarcar específico */
+.btn-outline-full.cancelar {
+    color: var(--error) !important;
+    border-color: #ffcccc;
+}
+
+.btn-outline-full.cancelar:hover {
+    background: #fff5f5;
+    border-color: var(--error);
+}
+
+/* Título da Página */
+.titulo-pagina {
+    font-size: 2rem;
+    font-weight: 900;
+    text-align: center;
+    color: var(--brand);
+    letter-spacing: -1px;
+    margin-bottom: 10px;
 }

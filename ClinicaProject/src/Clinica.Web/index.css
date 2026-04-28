@@ -2,8 +2,8 @@
    1. DESIGN SYSTEM & TOKENS
 ============================================================ */
 :root {
-    --brand: oklch(65% 0.18 180);        
-    --brand-soft: oklch(95% 0.05 180);
+    --brand: #A7C27E;        
+    --brand-soft: #A7C27E;
     --success: #22c55e;
     --error: #ff4d4d;
     --bg-app: #f8fafc;
@@ -26,6 +26,7 @@ body {
     background: radial-gradient(at top left, #f1f5f9, var(--bg-app));
     color: var(--texto);
     min-height: 100vh;
+    background: radial-gradient(circle at top right, var(--brand-soft), var(--bg-app) 50%);
 }
 
 .navbar {
@@ -40,7 +41,11 @@ body {
     top: 0; z-index: 100;
 }
 
-.logo { font-weight: 900; color: var(--brand); font-size: 1.3rem; text-decoration: none; }
+.logo { font-weight: 900; 
+    color: var(--brand); 
+    font-size: 1.3rem; 
+    text-decoration: none; 
+}
 
 /* MENU PERFIL (DROPDOWN ORGANIZADO) */
 .perfil-container { position: relative; cursor: pointer; }
@@ -116,8 +121,18 @@ body {
 /* ============================================================
    3. CARDS DE AGENDAMENTO
 ============================================================ */
-.container-agendamento { padding: 4rem; max-width: 1200px; margin: 0 auto; }
-.titulo-sessao { font-size: 2.5rem; font-weight: 900; text-align: center; margin-bottom: 3rem; letter-spacing: -1.5px; color: var(--brand); }
+.container-agendamento { 
+    padding: 4rem; 
+    max-width: 1200px; 
+    margin: 0 auto; 
+
+}
+.titulo-sessao { font-size: 2.5rem; 
+    font-weight: 900; 
+    text-align: center; 
+    margin-bottom: 3rem; 
+    letter-spacing: -1.5px; 
+    color: var(--brand); }
 
 .cards-grid {
     display: grid;
@@ -137,15 +152,18 @@ body {
 .card-moderno:hover { transform: translateY(-8px); box-shadow: 0 30px 60px -20px rgba(0,0,0,0.1); border-color: var(--brand); }
 
 .badge {
+    width: 60%;
+    margin: 5px;
     background: var(--brand-soft);
-    color: var(--brand);
+    color: var(--branco);
     padding: 6px 14px;
     border-radius: 100px;
-    font-size: 0.7rem;
+    font-size: 15px;
     font-weight: 800;
     text-transform: uppercase;
     display: inline-block;
     margin-bottom: 1.5rem;
+
 }
 
 /* ============================================================
@@ -153,11 +171,12 @@ body {
 ============================================================ */
 .select-premium, .input-premium {
     width: 100%;
+    margin: 10px;
     padding: 16px;
-    border-radius: 16px;
+    border-radius: 30px;
     border: 2px solid #f1f5f9;
     background: #f8fafc;
-    font-size: 1rem;
+    font-size: 20px;
     font-weight: 600;
     outline: none;
     transition: var(--transition);
@@ -167,17 +186,18 @@ body {
 
 .btn-agendar-main, .btn-confirmar-full {
     width: 100%;
-    padding: 1.2rem;
+    padding: 1rem;
+    margin-top: 10px;
     border-radius: 18px;
-    border: none;
+    border: 1px solid;
     background: var(--brand);
     color: white !important;
     font-weight: 800;
-    font-size: 1.1rem;
+    font-size: 1.5rem;
     cursor: pointer;
     transition: var(--transition);
     box-shadow: 0 10px 20px -5px var(--brand-soft);
-    text-decoration: none;
+    text-decoration: #A7C27E;
     display: flex; justify-content: center; align-items: center;
 }
 
@@ -186,6 +206,7 @@ body {
 .btn-outline-full {
     width: 100%;
     padding: 1rem;
+    margin-top: 10px;
     border-radius: 18px;
     border: 2px solid #e2e8f0;
     background: transparent;
@@ -206,10 +227,15 @@ dialog::backdrop {
     z-index: 999;
 }
 
-.modal-moderno {
+.modal-moderno { /* Ocupa no máximo 95% da altura da tela *//* Esconde qualquer barra de rolagem do modal */
+    flex-direction: column;
+    gap: 8px;
+    max-width: 180px;
+
+    padding-right: 5px;
     margin: 0;
     border: none;
-    padding: 2.5rem;
+    padding: 1.5rem;
     position: fixed;
     top: 50%; 
     left: 50%;

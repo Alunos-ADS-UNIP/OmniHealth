@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agendar Sessão - AgendaiFisio</title>
-    <!-- Fonte Inter Moderna -->
-    <link href="https://googleapis.com" rel="stylesheet">
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
@@ -30,7 +28,7 @@
     </header>
 
     <main class="container-agendamento">
-        <h1 class="titulo-sessao">Agendamento de Sessão</h1>
+        <h1 class="titulo-sessao">Agendamento de Consulta</h1>
 
         <div class="cards-grid">
             <!-- Card Informativo do Paciente -->
@@ -47,10 +45,10 @@
             <!-- Card de Escolha de Profissional -->
             <article class="card-moderno card-fisioterapeuta">
                 <span class="badge">Clínica de Fisioterapia</span>
-                <h2>Escolha o Especialista</h2>
+                <h2>Escolha o Terapeuta/Médico</h2>
                 
                 <div class="campo-selecao">
-                    <label for="selectFisio">Fisioterapeuta</label>
+                    <label for="selectFisio">Terapeuta/Médico</label>
                     <select id="selectFisio" class="select-premium">
                         <option value="" disabled selected>Selecione o Especialista...</option>
                         <option value="Dr. Davi Vinciaqui (Esportiva)">Dr. Davi Vinciaqui (Esportiva)</option>
@@ -64,29 +62,26 @@
         </div>
     </main>
 
-    <!-- ============================================================
-         SISTEMA DE POPUPS (MODAIS)
-    ============================================================ -->
-
     <!-- POPUP 1: MARCAR HORÁRIO -->
     <dialog id="modalAgenda" class="modal-moderno">
         <div class="modal-header">
             <h2>Marcar Horário</h2>
-            <button class="btn-fechar-x" type="button">×</button>
+            <!-- Clique no X agora fecha o modal corretamente -->
+            <button class="btn-fechar-x" type="button" onclick="this.closest('dialog').close()">×</button>
         </div>
         <div class="modal-body">
-            <!-- MENSAGEM DE ERRO DENTRO DO POPUP (Sincronizado com JS) -->
-            <div id="erroModal" class="mensagem-error-modal" style="display: none;">
+            <div id="erroModal" class="mensagem-error-modal" style="display: none; background: #fee2e2; color: #dc2626; padding: 10px; border-radius: 8px; margin-bottom: 15px;">
                 <span id="textoErroModal">⚠️ Por favor, escolha a data e o horário.</span>
             </div>
 
             <div class="passo">
                 <label>Especialista Confirmado</label>
-                <input type="text" id="modalEspecialista" class="input-premium" readonly>
+                <input type="text" id="modalEspecialista" class="input-premium" readonly style="background: #f1f5f9; cursor: not-allowed;">
             </div>
             <div class="passo">
                 <label>Escolha o Dia</label>
-                <input type="date" id="modalData" class="input-premium">
+                <!-- onkeydown="return false" impede digitar a data manualmente -->
+                <input type="date" id="modalData" class="input-premium" onkeydown="return false" required>
             </div>
             <div class="passo">
                 <label>Horários Disponíveis</label>
@@ -102,14 +97,14 @@
     <!-- POPUP 2: SUCESSO -->
     <dialog id="modalSucesso" class="modal-moderno">
         <div class="modal-body-centralizado">
-            <div class="icon-sucesso">✅</div>
+            <div class="icon-sucesso" style="font-size: 4rem; margin-bottom: 1rem;">✅</div>
             <h2>Agendado com Sucesso!</h2>
             <p>Confira os detalhes da sua sessão:</p>
             
-            <div class="resumo-agendamento">
-                <p><strong>Profissional:</strong> <span id="resumoMedico">--</span></p>
-                <p><strong>Data:</strong> <span id="resumoData">--</span></p>
-                <p><strong>Horário:</strong> <span id="resumoHora">--</span></p>
+            <div class="resumo-agendamento" style="background: #f8fafc; padding: 20px; border-radius: 16px; margin: 20px 0; text-align: left; border: 1px solid #e2e8f0;">
+                <p style="margin: 5px 0;"><strong>Profissional:</strong> <span id="resumoMedico">--</span></p>
+                <p style="margin: 5px 0;"><strong>Data:</strong> <span id="resumoData">--</span></p>
+                <p style="margin: 5px 0;"><strong>Horário:</strong> <span id="resumoHora">--</span></p>
             </div>
 
             <button id="btnProximoPasso" class="btn-confirmar-full" type="button">Continuar</button>
@@ -119,13 +114,13 @@
     <!-- POPUP 3: NAVEGAÇÃO PÓS-AGENDAMENTO -->
     <dialog id="modalNavegacao" class="modal-moderno">
         <div class="modal-body-centralizado">
-            <div class="icon-pergunta">📅</div>
+            <div class="icon-pergunta" style="font-size: 4rem; margin-bottom: 1rem;">📅</div>
             <h2>O que deseja fazer?</h2>
-            <p>Seu agendamento foi salvo. Deseja visualizar sua agenda agora?</p>
+            <p>Seu agendamento foi salvo com segurança.</p>
             
-            <div class="botoes-duplos">
-                <a href="TelaPaciente.html" class="btn-confirmar-full">Sim, ver consultas</a>
-                <button onclick="location.reload()" class="btn-outline-full" type="button">Não, agendar outra</button>
+            <div class="botoes-duplos" style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
+                <a href="TelaPaciente.html" class="btn-confirmar-full" style="text-decoration: none; text-align: center;">Sim, ver minhas consultas</a>
+                <button onclick="location.reload()" class="btn-outline-full" type="button" style="padding: 15px; border-radius: 12px; border: 2px solid #e2e8f0; background: none; cursor: pointer; font-weight: bold;">Agendar outra sessão</button>
             </div>
         </div>
     </dialog>

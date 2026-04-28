@@ -1,51 +1,77 @@
+/* ============================================================
+   1. LÓGICA GLOBAL DE CANCELAMENTO
+   ============================================================ */
+
+/**
+ * Função global chamada estritamente pelo clique no botão do card.
+ * Armazena os dados no modal e o exibe de forma controlada.
+ */
+window.prepararCancelamento = function(data, hora) {
+    const modal = document.getElementById("modalAvisoCancel");
+    
+    if (modal) {
+        // Garante que o modal esteja fechado antes de configurar novos dados
+        if (modal.open) modal.close();
+
+        // Vincula os dados da consulta específica ao modal
+        modal.dataset.dataParaRemover = data;
+        modal.dataset.horaParaRemover = hora;
+        
+        // Abre o modal apenas agora
+        modal.showModal();
+        
+        // Foco no botão de cancelar para acessibilidade
+        const btnManter = modal.querySelector(".btn-outline-full");
+        if (btnManter) btnManter.focus();
+    }
+};
+
+/* ============================================================
+   2. INICIALIZAÇÃO E RENDERIZAÇÃO
+   ============================================================ */
+
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. MAPEAMENTO DE ELEMENTOS
     const containerLista = document.getElementById("listaConsultas");
     const avisoVazio = document.getElementById("statusConsultaVazio");
     const areaAtalho = document.getElementById("areaAtalho");
-    const modalAviso = document.getElementById("modalAvisoCancel");
     const btnConfirmarCancel = document.getElementById("confirmarCancelamento");
 
-    let infoParaRemover = null; // Armazena data e hora para cancelamento
-
-    // 2. FUNÇÃO PARA CARREGAR AS CONSULTAS DO BANCO SINCRONIZADO
+    /**
+     * Renderiza os cards baseando-se no banco de dados local.
+     */
     const carregarAgendaDoPaciente = () => {
-        // Lê a agenda global (mesma chave usada pelo Terapeuta e no Agendamento)
         const agendaGlobal = JSON.parse(localStorage.getItem('agendaFisioData')) || {};
-        const nomePacienteLogado = "Davi Gusmão"; // Nome que deve constar no agendamento
+        const nomePacienteLogado = "Davi Gusmão"; 
 
-        // Limpa cards antigos para evitar duplicatas
+        // Limpa apenas os cards gerados anteriormente
         const cardsExistentes = containerLista.querySelectorAll(".card-consulta-item");
         cardsExistentes.forEach(card => card.remove());
 
         let encontrouConsulta = false;
 
-        // Varre todas as datas e horários do banco
-        Object.keys(agendaGlobal).sort().forEach(data => {
+        // Ordenação por data para melhor visualização
+        const datasOrdenadas = Object.keys(agendaGlobal).sort();
+
+        datasOrdenadas.forEach(data => {
             Object.keys(agendaGlobal[data]).forEach(hora => {
                 const info = agendaGlobal[data][hora];
 
-                // Se o horário estiver ocupado por este paciente específico
+                // Só renderiza se o paciente for o logado e o status for bloqueado
                 if (info.paciente === nomePacienteLogado) {
                     encontrouConsulta = true;
 
                     const card = document.createElement("div");
                     card.className = "card-moderno card-consulta-item";
-                    card.style.display = "flex";
-                    card.style.flexDirection = "column";
-                    card.style.justifyContent = "space-between";
-                    card.style.marginTop = "20px";
-
+                    
                     card.innerHTML = `
-                        <div>
+                        <div class="card-body-info">
                             <span class="badge">Sessão Confirmada</span>
-                            <h3 style="margin: 15px 0 10px 0;">Atendimento Fisioterapêutico</h3>
-                            <p style="margin: 5px 0; color: var(--texto-muted);"><strong>📅 Data:</strong> ${data.split('-').reverse().join('/')}</p>
-                            <p style="margin: 5px 0; color: var(--texto-muted);"><strong>🕒 Horário:</strong> ${hora}</p>
+                            <h3 class="card-titulo-sessao">Atendimento Fisioterapêutico</h3>
+                            <p class="card-detalhe"><strong>📅 Data:</strong> ${data.split('-').reverse().join('/')}</p>
+                            <p class="card-detalhe"><strong>🕒 Horário:</strong> ${hora}</p>
                         </div>
-                        <button class="btn-outline-full" 
-                                style="color: var(--error) !important; border-color: #ffcccc; margin-top: 20px;" 
-                                onclick="prepararCancelamento('${data}', '${hora}')">
+                        <button type="button" class="btn-cancelar-sessao" 
+                                onclick="window.prepararCancelamento('${data}', '${hora}')">
                             Desmarcar Sessão
                         </button>
                     `;
@@ -54,43 +80,41 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
 
-        // Controle de visibilidade dos avisos e botões de atalho
-        if (!encontrouConsulta) {
-            avisoVazio.style.display = "block";
-            if (areaAtalho) areaAtalho.style.display = "none";
-        } else {
-            avisoVazio.style.display = "none";
-            if (areaAtalho) areaAtalho.style.display = "block";
-        }
+        // Gerenciamento de visibilidade de placeholders
+        if (avisoVazio) avisoVazio.style.display = encontrouConsulta ? "none" : "block";
+        if (areaAtalho) areaAtalho.style.display = encontrouConsulta ? "block" : "none";
     };
 
-    // 3. LÓGICA DE CANCELAMENTO
-    window.prepararCancelamento = (data, hora) => {
-        infoParaRemover = { data, hora };
-        if (modalAviso) modalAviso.showModal();
-    };
-
+    /**
+     * Ação de confirmação de exclusão (Botão "Sim" do Modal)
+     */
     if (btnConfirmarCancel) {
         btnConfirmarCancel.onclick = () => {
-            if (!infoParaRemover) return;
+            const modal = document.getElementById("modalAvisoCancel");
+            const data = modal.dataset.dataParaRemover;
+            const hora = modal.dataset.horaParaRemover;
+
+            if (!data || !hora) return;
 
             const agendaGlobal = JSON.parse(localStorage.getItem('agendaFisioData')) || {};
             
-            // Libera o horário no banco (volta para disponível e remove o paciente)
-            if (agendaGlobal[infoParaRemover.data] && agendaGlobal[infoParaRemover.data][infoParaRemover.hora]) {
-                agendaGlobal[infoParaRemover.data][infoParaRemover.hora] = { 
-                    status: "disponivel", 
-                    paciente: null 
-                };
+            if (agendaGlobal[data] && agendaGlobal[data][hora]) {
+                // Deleta a entrada e limpa chaves de datas vazias
+                delete agendaGlobal[data][hora];
+                if (Object.keys(agendaGlobal[data]).length === 0) {
+                    delete agendaGlobal[data];
+                }
             }
 
+            // Persiste no storage e fecha a interface
             localStorage.setItem('agendaFisioData', JSON.stringify(agendaGlobal));
+            modal.close();
             
-            if (modalAviso) modalAviso.close();
-            carregarAgendaDoPaciente(); // Atualiza a tela sem precisar de reload total
+            // Recarrega a lista dinamicamente
+            carregarAgendaDoPaciente();
         };
     }
 
-    // Inicializa
+    // Executa a carga inicial
     carregarAgendaDoPaciente();
 });

@@ -15,41 +15,39 @@
         </div>
     </header>
 
-    <div class="titulo-pagina" style="text-align: center; margin-top: 2rem; font-size: 2rem; font-weight: 900; color: var(--brand);">
-        Minha Saúde
-    </div>
+    <h1 class="minhaSaude">Minha Saúde</h1>
 
     <main class="container-agendamento">
-        <article class="card-moderno" style="margin-bottom: 2rem; text-align: center;">
+        <article class="card-moderno card-perfil-paciente">
             <span class="badge">Paciente Ativo</span>
-            <h2 style="margin: 10px 0;">Davi Gusmão</h2>
-            <p style="color: var(--texto-muted);">Aqui você gerencia seus atendimentos marcados.</p>
-            
-            <!-- BOTÃO DE ATALHO PARA AGENDAMENTO (NOVO) -->
-            <div id="areaAtalho" style="margin-top: 1.5rem; display: none;">
-                <a href="index.html" class="btn-agendar-atalho">
-                    <span>+</span> Agendar Nova Sessão
-                </a>
+            <h2 class="nome-paciente">Davi Gusmão</h2>
+            <p class="subtitulo-paciente">Aqui você gerencia seus atendimentos marcados.</p>
+            <div id="areaAtalho" class="atalho-agendamento">
+                <a href="index.html" class="btn-agendar-atalho"><span>+</span> Agendar Nova Sessão</a>
             </div>
         </article>
 
         <div id="listaConsultas" class="cards-grid">
-            <div id="statusConsultaVazio" class="card-moderno" style="grid-column: 1 / -1; text-align: center; padding: 4rem;">
-                <p style="color: var(--texto-muted); font-size: 1.1rem; margin-bottom: 2rem;">Nenhuma sessão agendada.</p>
-                <a href="index.html" class="btn-agendar-main" style="max-width: 300px; margin: 0 auto; text-decoration: none;">Agendar Nova Sessão</a>
+            <div id="statusConsultaVazio" class="card-moderno card-vazio">
+                <p class="msg-vazio">Nenhuma sessão agendada.</p>
+                <a href="index.html" class="btn-agendar-main">Agendar Nova Sessão</a>
             </div>
         </div>
     </main>
 
     <dialog id="modalAvisoCancel" class="modal-moderno">
-        <div style="text-align: center;">
-            <div style="font-size: 3rem; margin-bottom: 1rem;">⚠️</div>
-            <h3 style="color: var(--error); font-size: 1.5rem; font-weight: 900;">Desmarcar Consulta?</h3>
-            <p style="margin: 1.5rem 0; color: var(--texto-muted);">Essa ação não pode ser desfeita. Deseja realmente cancelar?</p>
-            
-            <div class="botoes-duplos" style="display: flex; flex-direction: column; gap: 10px;">
-                <button id="confirmarCancelamento" class="btn-confirmar-full" style="background: var(--error);">Sim, Desmarcar</button>
-                <button onclick="document.getElementById('modalAvisoCancel').close()" class="btn-outline-full">Não, Manter Consulta</button>
+        <div class="modal-content">
+            <div class="modal-icon">⚠️</div>
+            <h3 class="modal-titulo-erro">Desmarcar Consulta?</h3>
+            <p class="modal-subtitulo">Essa ação não pode ser desfeita. Deseja realmente cancelar?</p>
+
+            <div class="botoes-duplos-stack">
+                <button id="confirmarCancelamento" class="btn-confirmar-full btn-perigo">Sim, Desmarcar</button>
+               <button type="button" 
+                onclick="this.closest('dialog').close()" 
+                class="btn-outline-full">
+                Não, Manter Consulta
+                </button>
             </div>
         </div>
     </dialog>

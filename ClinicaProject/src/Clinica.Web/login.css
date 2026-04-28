@@ -1,174 +1,164 @@
 /* ============================================================
-   DESIGN SYSTEM (MODERN LOGIN) - VERSÃO QUADRADA & LIMPA
+   DESIGN SYSTEM (MODERN & BOLD)
 ============================================================ */
 :root {
-    --p-paciente: oklch(78% 0.12 120);
-    --p-paciente-dark: oklch(70% 0.12 120);
-    --text-main: oklch(25% 0.02 240);
-    --text-muted: oklch(50% 0.02 240);
-    --bg-gradient: radial-gradient(circle at top right, oklch(96% 0.01 240), oklch(90% 0.02 240));
-    --white: #ffffff;
-    --border: oklch(92% 0.02 240);
-    --radius-pro: 24px;
-    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --primary: #A7C27E;
+    --primary-hover: #8da866;
+    --bg-dark: #1a1a1a;
+    --glass-bg: rgba(255, 255, 255, 0.95);
+    --text-main: #2d3436;
+    --text-muted: #636e72;
+    --border-soft: rgba(0, 0, 0, 0.05);
+    --radius-premium: 32px;
+    --shadow-elegant: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
 }
 
 /* ============================================================
-   LAYOUT BASE
+   LAYOUT BASE COM GRADIENTE ANIMADO
 ============================================================ */
 body {
     margin: 0;
     padding: 0;
     height: 100vh;
     height: 100dvb;
-    background: var(--bg-gradient);
-    font-family: 'Inter', system-ui, sans-serif;
+    background: radial-gradient(circle at top right, #A7C27E, #ffffff, #A7C27E, #ffffff);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
     display: grid;
     place-items: center;
-    color: var(--text-main);
     overflow: hidden;
 }
 
-/* ============================================================
-   CONTAINER DO LOGIN (QUADRADO)
-============================================================ */
-.login-box {
-    background: var(--white);
-    inline-size: 90%;
-    max-inline-size: 600px; /* Aumentado para favorecer o formato quadrado */
-    min-block-size: 600px; /* Força a altura mínima para ser quadrado */
-    padding: 1rem;
-    border-radius: var(--radius-pro);
-    box-shadow: 0 20px 50px -12px oklch(0% 0 0 / 0.1);
-    animation: slideUp 0.6s var(--transition);
-    display: flex;
-    flex-direction: column;
-    justify-content: center; /* Centraliza o conteúdo dentro do quadrado */
-    box-sizing: border-box;
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 /* ============================================================
-   TIPOGRAFIA
+   CONTAINER QUADRADO MODERNO
 ============================================================ */
+.login-box {
+    background: var(--glass-bg);
+    inline-size: 90%;
+    max-inline-size: 500px;
+    aspect-ratio: 1 / 1; 
+    padding: 3rem;
+    border-radius: var(--radius-premium);
+    box-shadow: var(--shadow-elegant);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box;
+    transition: transform 0.4s ease;
+    animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.login-box:hover {
+    transform: translateY(-5px);
+}
+
 h2.titulo_login {
-    color: #A7C27E;
-    font-size: 2.8rem;
+    color: var(--primary);
+    font-size: 30px;
     font-weight: 800;
-    letter-spacing: -0.02em;
-    margin: 0 0 0.5rem 0;
-    text-align: center;
+    margin: 0;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.05));
 }
 
 .login-box h2:not(.titulo_login) {
-    font-size: 1.6rem;
+    font-size: 1.4rem;
     font-weight: 700;
-    margin-bottom: 0.5rem;
-    text-align: center;
+    color: var(--bg-dark);
+    margin: 0.5rem 0;
 }
 
 .login-box p {
     color: var(--text-muted);
-    text-align: center;
     font-size: 0.95rem;
     margin-bottom: 2rem;
 }
 
 /* ============================================================
-   INPUTS & LABELS
+   INPUTS E BOTÕES
 ============================================================ */
 .input-group {
     margin-bottom: 1.2rem;
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
+    gap: 0.5rem;
 }
 
 .input-group label {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--text-main);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-muted);
 }
 
 .input-estilizado {
     inline-size: 100%;
-    padding: 1rem;
-    border-radius: 12px;
-    border: 2px solid var(--border);
+    padding: 1.1rem;
+    border-radius: 16px;
+    border: 1px solid var(--border-soft);
+    background: #f8fafc;
     font-size: 1rem;
-    transition: var(--transition);
-    outline: none;
+    transition: all 0.3s ease;
     box-sizing: border-box;
 }
 
 .input-estilizado:focus {
-    border-color: var(--p-paciente);
-    box-shadow: 0 0 0 4px oklch(78% 0.12 120 / 0.1);
+    background: #fff;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(167, 194, 126, 0.2);
+    outline: none;
 }
 
-/* ============================================================
-   BOTÃO DE ENTRAR
-============================================================ */
 .btn-auth {
     inline-size: 100%;
-    margin-top: 0.5rem;
-    padding: 1.1rem;
-    border-radius: 12px;
+    margin-top: 1rem;
+    padding: 1.2rem;
+    border-radius: 16px;
     border: none;
-    background: var(--text-main);
-    color: var(--white);
+    background: var(--bg-dark);
+    color: #fff;
     font-weight: 700;
-    font-size: 1rem;
     cursor: pointer;
-    transition: var(--transition);
+    transition: all 0.3s ease;
 }
 
 .btn-auth:hover {
-    background: #A7C27E;
-    transform: translateY(-2px);
+    background: var(--primary);
+    box-shadow: 0 10px 20px rgba(167, 194, 126, 0.3);
 }
 
-/* ============================================================
-   FOOTER (LINKS SEM ROXO)
-============================================================ */
 .auth-footer {
     margin-top: 2rem;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 0.8rem;
-    font-size: 0.9rem;
+    gap: 0.6rem;
+    font-size: 0.85rem;
+    text-align: center;
 }
 
-/* Remove o roxo padrão de links visitados */
-.auth-footer a, 
-.auth-footer a:visited {
-    color: var(--p-paciente-dark);
+.auth-footer a {
+    color: var(--bg-dark);
     text-decoration: none;
-    font-weight: 600;
-    transition: var(--transition);
+    font-weight: 700;
+    transition: 0.3s;
 }
 
 .auth-footer a:hover {
-    color: var(--text-main);
-    text-decoration: underline;
-}
-
-.auth-footer span {
-    color: var(--text-muted);
-}
-
-/* ============================================================
-   RESPONSIVIDADE
-============================================================ */
-@media (max-width: 480px) {
-    .login-box {
-        min-block-size: auto; /* Em celulares pequenos, permite ajustar a altura */
-        padding: 2rem 1.5rem;
-    }
-    h2.titulo_login { font-size: 2.2rem; }
+    color: var(--primary);
 }
 
 @keyframes slideUp {
-    from { opacity: 0; transform: translateY(15px); }
+    from { opacity: 0; transform: translateY(30px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 550px) {
+    .login-box { aspect-ratio: auto; padding: 2.5rem 1.5rem; }
 }

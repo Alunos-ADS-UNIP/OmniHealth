@@ -34,10 +34,17 @@
 body {
     margin: 0;
     font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
-    background: radial-gradient(circle at top right, var(--brand-soft), var(--bg-app) 50%);
+    background: radial-gradient(circle at top right, #A7C27E, #ffffff, #A7C27E, #ffffff);
+    background-size: 400% 400%;
     color: var(--texto);
     min-height: 100vh;
     line-height: 1.6;
+    animation: gradientBG 3s ease infinite;
+}
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 /* ============================================================
@@ -196,4 +203,15 @@ body {
 }
 button.btn-cancelar-sessão{
     border-radius: 10px;
+}
+span.paciente-ativo{
+    display: inline-block;
+    padding: 6px 16px;
+    background: var(--brand-soft);
+    color: var(--branco);
+    border-radius: 100px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }

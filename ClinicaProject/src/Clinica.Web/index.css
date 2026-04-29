@@ -166,6 +166,7 @@ body {
 
 }
 
+
 /* ============================================================
    4. FORMULÁRIOS (INPUTS E BOTÕES)
 ============================================================ */
@@ -331,4 +332,34 @@ footer button, .body-footer-button { display: none !important; }
     0%, 100% { transform: translateX(0); }
     25% { transform: translateX(-5px); }
     75% { transform: translateX(5px); }
+}
+/* Disponível - Verde Moderno */
+.btn-hora.disponivel {
+    background: #f0fdf4 !important;
+    color: #16a34a !important;
+    border: 1px solid #bbf7d0 !important;
+}
+
+/* Bloqueado/Ocupado - Vermelho Moderno */
+.btn-hora.ocupado {
+    background: #fef2f2 !important;
+    color: #ef4444 !important;
+    border: 1px solid #fecaca !important;
+    cursor: not-allowed;
+}
+
+/* Encerrado - Cinza Neutro */
+.btn-hora.encerrado {
+    background: #f1f5f9 !important;
+    color: #94a3b8 !important;
+    border: 1px solid #e2e8f0 !important;
+    cursor: not-allowed;
+}
+
+/* Selecionado - Sua cor principal */
+.btn-hora.active {
+    background: var(--brand) !important;
+    color: white !important;
+    border-color: var(--brand) !important;
+    transform: scale(1.05);
 }

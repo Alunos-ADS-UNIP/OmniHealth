@@ -133,7 +133,20 @@ body {
     cursor: pointer;
     transition: var(--transition);
 }
-
+.btn-cancelar-sessao{
+    border: transparent;
+    border-radius: 15px ;
+    background: #A7C27E;
+    color: var(--branco);
+    padding: 1rem;
+    font-size: 1rem;
+    font-weight: 1000;
+}
+.btn-cancelar-sessao:hover{
+    background: #ff4d4d;
+    transform: scale(1.05);
+    filter: brightness(1.1)
+}
 /* ============================================================
    6. SISTEMA DE MODAL (GLASSMORPHISM)
    ============================================================ */
@@ -170,7 +183,12 @@ body {
     font-size: 1.6rem;
     font-weight: 900;
     margin-bottom: 1rem;
+
 }
+.modal-icon{
+    font-size: 30px;
+}
+
 
 /* ============================================================
    7. GRID E RESPONSIVIDADE

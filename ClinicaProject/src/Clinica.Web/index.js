@@ -1,169 +1,185 @@
-window.onload = function() {
-    // 1. MAPEAMENTO DE ELEMENTOS
-    const el = {
-        btnAbrir: document.getElementById("btnAbrir"),
-        btnConfirmar: document.getElementById("confirmarAgendamento"),
-        btnFechar: document.getElementById("btnFechar"),
-        
-        modalAgenda: document.getElementById("modalAgenda"),
-        modalSucesso: document.getElementById("modalSucesso"),
-        
-        selectPrincipal: document.getElementById('selectTerapeutaPrincipal'),
-        selectModal: document.getElementById('selectTerapeuta'),
-        inputData: document.getElementById('dataAgendamento'),
-        containerHorarios: document.getElementById('containerHorarios'),
-        
-        toast: document.getElementById("toastErro"),
-        msgErro: document.getElementById("mensagemErro"), 
-        
-        dadosConfirmados: document.getElementById("dadosConfirmados")
-    };
-
-    let horaSelecionada = "";
-
-    /* ============================================================
-       FUNÇÕES DE APOIO
-    ============================================================ */
-
-    // Exibe o erro nítido dentro do modal (ou fora se o modal estiver fechado)
-    const mostrarErro = (mensagem) => {
-        el.msgErro.innerText = mensagem;
-        el.toast.classList.add('toast-visible');
-        
-        // Remove automaticamente após 3.5 segundos
-        setTimeout(() => {
-            el.toast.classList.remove('toast-visible');
-        }, 3500);
-    };
-
-    // Gera botões de horários dinamicamente (Contexto Fisioterapia)
-    const atualizarHorarios = () => {
-        const medico = el.selectModal.value;
-        const data = el.inputData.value;
-
-        if (!medico || !data) {
-            el.containerHorarios.innerHTML = `
-                <p style="grid-column: 1/-1; text-align:center; font-size:0.85rem; color:var(--text-light); padding:20px;">
-                    Escolha o fisioterapeuta e a data para ver a disponibilidade.
-                </p>`;
-            return;
-        }
-
-        el.containerHorarios.innerHTML = "";
-        const listaHoras = ["08:00", "09:30", "11:00", "14:00", "15:30", "17:00"];
-
-        listaHoras.forEach(h => {
-            const btn = document.createElement("button");
-            btn.className = "btn-hora";
-            btn.innerText = h;
-            btn.type = "button";
-            btn.onclick = () => {
-                document.querySelectorAll('.btn-hora').forEach(b => b.classList.remove('selecionado'));
-                btn.classList.add('selecionado');
-                horaSelecionada = h;
-            };
-            el.containerHorarios.appendChild(btn);
-        });
-    };
-
-    /* ============================================================
-       EVENTOS PRINCIPAIS
-    ============================================================ */
-
-    // ABRIR MODAL: Validação na tela principal
-    el.btnAbrir.onclick = () => {
-        if (!el.selectPrincipal.value) {
-            mostrarErro("Selecione um especialista para agendar a sessão.");
-            return;
-        }
-        el.selectModal.value = el.selectPrincipal.value;
-        atualizarHorarios();
-        el.modalAgenda.showModal();
-    };
-
-    // FECHAR MODAL: Reset de estado
-    el.btnFechar.onclick = () => {
-        el.modalAgenda.close();
-        horaSelecionada = ""; 
-        el.toast.classList.remove('toast-visible'); // Garante que o erro suma ao fechar
-    };
-
-    // Listeners de mudança no formulário
-    el.selectModal.onchange = () => {
-        horaSelecionada = ""; // Reseta hora ao trocar médico
-        atualizarHorarios();
-    };
-    el.inputData.onchange = atualizarHorarios;
-
-    // CONFIRMAR: Validação rigorosa dentro do Modal
-    el.btnConfirmar.onclick = () => {
-        const medico = el.selectModal.value;
-        const data = el.inputData.value;
-
-        // Verificando campos vazios passo a passo
-        if (!medico) {
-            mostrarErro("Escolha o fisioterapeuta responsável.");
-            return;
-        }
-        if (!data) {
-            mostrarErro("Defina uma data para a sua reabilitação.");
-            return;
-        }
-        if (!horaSelecionada) {
-            mostrarErro("Selecione um horário para confirmar.");
-            return;
-        }
-
-        // SE TUDO OK: Prepara o sucesso
-        const nomePaciente = document.getElementById('nomePaciente').innerText;
-        const dataFormatada = data.split('-').reverse().join('/');
-
-        el.dadosConfirmados.innerHTML = `
-            <div class="resumo-sucesso">
-                <p style="margin-bottom:10px;"><strong>👤 Paciente</strong><br>${nomePaciente}</p>
-                <p style="margin-bottom:10px;"><strong>🩺 Especialista</strong><br>${medico}</p>
-                <p><strong>📅 Agendado para</strong><br>${dataFormatada} às ${horaSelecionada}</p>
-            </div>
-        `;
-
-        el.modalAgenda.close();
-        el.modalSucesso.showModal();
-    };
+// --- 1. CONFIGURAÇÕES INICIAIS E MAPEAMENTO ---
+const elements = {
+    btnAgendarPrincipal: document.getElementById('btnAgendar'),
+    selectFisio: document.getElementById('selectFisio'),
+    toastErro: document.getElementById('toastErro'),
+    
+    modalAgenda: document.getElementById('modalAgenda'),
+    modalSucesso: document.getElementById('modalSucesso'),
+    modalNavegacao: document.getElementById('modalNavegacao'),
+    
+    modalEspecialista: document.getElementById('modalEspecialista'),
+    modalData: document.getElementById('modalData'),
+    gridHorarios: document.getElementById('gridHorarios'),
+    btnConfirmarAgendamento: document.getElementById('btnConfirmarAgendamento'),
+    erroModal: document.getElementById('erroModal'),
+    textoErroModal: document.getElementById('textoErroModal'),
+    
+    resumoMedico: document.getElementById('resumoMedico'),
+    resumoData: document.getElementById('resumoData'),
+    resumoHora: document.getElementById('resumoHora'),
+    btnProximoPasso: document.getElementById('btnProximoPasso')
 };
-el.dadosConfirmados.innerHTML = `
-    <div class="resumo-item">
-        <span class="icon">👤</span>
-        <div>
-            <strong>Paciente</strong>
-            <p>${nomePaciente}</p>
-        </div>
-    </div>
-    <div class="resumo-item">
-        <span class="icon">🩺</span>
-        <div>
-            <strong>Fisioterapeuta</strong>
-            <p>${medico}</p>
-        </div>
-    </div>
-    <div class="resumo-item">
-        <span class="icon">📅</span>
-        <div>
-            <strong>Data e Horário</strong>
-            <p>${dataFormatada} às ${horaSelecionada}</p>
-        </div>
-    </div>
-`;
-// Dentro da função el.btnConfirmar.onclick
-el.btnConfirmar.onclick = () => {
-    // ... suas validações de data e hora ...
 
-    if (passouNaValidacao) {
-        // 1. Primeiro fecha o modal de agendamento
-        el.modalAgenda.close();
+let horaSelecionada = null;
 
-        // 2. Preenche os dados (seu código de innerHTML aqui)
-        
-        // 3. Abre o modal de sucesso como POPUP real
-        el.modalSucesso.showModal(); 
+const gradeBase = ["10:00","10:30", "11:00", 
+    "11:30", "12:00", "12:30", "13:00", "13:30", 
+    "14:00","14:30", "15:00", "15:30", "16:00", 
+    "16:30", "17:00", "17:30", "18:00"];
+
+const getHojeBR = () => {
+    const data = new Date();
+    data.setMinutes(data.getMinutes() - data.getTimezoneOffset());
+    return data.toISOString().split('T')[0];
+};
+
+// --- 2. LÓGICA DE ABERTURA ---
+
+elements.btnAgendarPrincipal.onclick = () => {
+    if (!elements.selectFisio.value) {
+        elements.toastErro.classList.add("show");
+        setTimeout(() => elements.toastErro.classList.remove("show"), 3000);
+        return;
     }
+
+    elements.modalEspecialista.value = elements.selectFisio.value;
+    elements.modalData.setAttribute("min", getHojeBR());
+    elements.modalData.value = "";
+    elements.gridHorarios.innerHTML = "<p style='grid-column:1/-1; color:gray; text-align:center;'>Escolha uma data primeiro...</p>";
+    elements.erroModal.style.display = "none";
+    horaSelecionada = null;
+
+    document.body.style.overflow = 'hidden';
+    elements.modalAgenda.showModal();
 };
+
+// --- 3. RENDERIZAÇÃO DE HORÁRIOS (LOGICA DE TEMPO REAL E BLOQUEIOS) ---
+
+elements.modalData.onchange = () => {
+    const dataSel = elements.modalData.value;
+    if (!dataSel) return;
+
+    const agora = new Date();
+    const hojeStr = getHojeBR();
+
+    const agendaGlobal = JSON.parse(localStorage.getItem('agendaFisioData')) || {};
+    const dadosDaData = agendaGlobal[dataSel] || {};
+
+    elements.gridHorarios.innerHTML = "";
+    horaSelecionada = null;
+    
+    gradeBase.forEach(hora => {
+        const info = dadosDaData[hora] || { status: "disponivel" };
+        const isBloqueadoPeloFisio = info.status === "bloqueado";
+
+        // Lógica de Horário Passado
+        let isPassado = false;
+        if (dataSel === hojeStr) {
+            const [h, m] = hora.split(':');
+            const dataHoraBotao = new Date();
+            dataHoraBotao.setHours(parseInt(h), parseInt(m), 0, 0);
+
+            if (dataHoraBotao <= agora) {
+                isPassado = true;
+            }
+        }
+
+        const btn = document.createElement("button");
+        btn.classList.add("btn-hora");
+        btn.type = "button";
+        
+        // ORDEM DE IMPORTÂNCIA: 1º Se passou do horário, 2º Se está bloqueado/agendado
+        if (isPassado) {
+            btn.classList.add("encerrado"); 
+            btn.disabled = true;
+            btn.innerHTML = `<small style="font-size: 10px; display: block; opacity: 0.7;">Encerrado</small>${hora}`;
+            btn.style.opacity = "0.5";
+            btn.style.cursor = "not-allowed";
+        } 
+        else if (isBloqueadoPeloFisio) {
+            btn.classList.add("ocupado"); 
+            btn.disabled = true;
+            btn.innerHTML = `🚫 ${hora}`;
+            btn.style.cursor = "not-allowed";
+        } 
+        else {
+            btn.classList.add("disponivel");
+            btn.innerText = hora;
+            btn.onclick = () => {
+                document.querySelectorAll('.btn-hora').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                horaSelecionada = hora;
+                elements.erroModal.style.display = "none";
+            };
+        }
+        
+        elements.gridHorarios.appendChild(btn);
+    });
+};
+
+// --- 4. CONFIRMAÇÃO (SALVAMENTO INTEGRADO) ---
+
+elements.btnConfirmarAgendamento.onclick = () => {
+    const dataRaw = elements.modalData.value;
+
+    if (!dataRaw || !horaSelecionada) {
+        elements.textoErroModal.innerText = "⚠️ Selecione a data e o horário.";
+        elements.erroModal.style.display = "block";
+        return;
+    }
+
+    const dataFormatada = dataRaw.split("-").reverse().join("/");
+
+    // 1. Salva no histórico do paciente
+    const novaConsulta = {
+        especialista: elements.modalEspecialista.value,
+        data: dataFormatada,
+        hora: horaSelecionada,
+        id: Date.now()
+    };
+    const consultas = JSON.parse(localStorage.getItem("consultas_fisio")) || [];
+    consultas.push(novaConsulta);
+    localStorage.setItem("consultas_fisio", JSON.stringify(consultas));
+
+    // 2. Salva na agenda global para o Terapeuta ver e bloquear o horário
+    const agendaGlobal = JSON.parse(localStorage.getItem('agendaFisioData')) || {};
+    if (!agendaGlobal[dataRaw]) agendaGlobal[dataRaw] = {};
+    
+    agendaGlobal[dataRaw][horaSelecionada] = { 
+        status: "bloqueado", 
+        paciente: "Davi Gusmão" 
+    };
+    localStorage.setItem('agendaFisioData', JSON.stringify(agendaGlobal));
+
+    // Feedback Visual e Transição
+    elements.modalAgenda.close();
+    setTimeout(() => {
+        elements.resumoMedico.innerText = novaConsulta.especialista;
+        elements.resumoData.innerText = novaConsulta.data;
+        elements.resumoHora.innerText = novaConsulta.hora;
+        elements.modalSucesso.showModal();
+    }, 150);
+};
+
+// --- 5. NAVEGAÇÃO E FECHAMENTO ---
+
+elements.btnProximoPasso.onclick = () => {
+    elements.modalSucesso.close();
+    setTimeout(() => {
+        if(elements.modalNavegacao) elements.modalNavegacao.showModal();
+    }, 150);
+};
+
+const monitorarFechamento = (modal) => {
+    if(!modal) return;
+    modal.addEventListener('close', () => {
+        // Só libera o scroll se nenhum outro modal estiver aberto
+        const algumAberto = elements.modalAgenda.open || elements.modalSucesso.open || (elements.modalNavegacao && elements.modalNavegacao.open);
+        if (!algumAberto) {
+            document.body.style.overflow = 'auto';
+        }
+    });
+};
+
+[elements.modalAgenda, elements.modalSucesso, elements.modalNavegacao].forEach(monitorarFechamento);

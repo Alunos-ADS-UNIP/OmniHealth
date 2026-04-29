@@ -2,69 +2,55 @@ window.onload = function() {
     const btnEntrar = document.getElementById("btnEntrar");
     const inputCPF = document.getElementById("cpfLogin");
     const inputSenha = document.getElementById("senha");
-    const URL_API = "http://localhost:8000/login"; 
 
     // --- MÁSCARA DE CPF ---
     if (inputCPF) {
         inputCPF.addEventListener("input", function(e) {
-            let v = e.target.value.replace(/\D/g, ""); // Remove o que não é número
-
-            // Aplica a formatação visual conforme digita
-            if (v.length <= 11) {
-                v = v.replace(/(\d{3})(\d)/, "$1.$2");
-                v = v.replace(/(\d{3})(\d)/, "$1.$2");
-                v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
-            }
+            let v = e.target.value.replace(/\D/g, "");
+            if (v.length > 11) v = v.slice(0, 11);
+            v = v.replace(/(\d{3})(\d)/, "$1.$2");
+            v = v.replace(/(\d{3})(\d)/, "$1.$2");
+            v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
             e.target.value = v;
-            inputCPF.classList.remove("input-erro");
         });
     }
 
-    // --- LÓGICA DE ENTRAR ---
+    // --- LÓGICA DE LOGIN ---
     if (btnEntrar) {
-        btnEntrar.onclick = async function() {
-            const cpfLimpio = inputCPF.value.replace(/\D/g, ""); // Apenas números para a API
-            const senha = inputSenha.value.trim();
-            let temErro = false;
+        btnEntrar.addEventListener("click", function(e) {
+            e.preventDefault(); 
+            e.stopPropagation();
 
-            // Validação visual
-            if (cpfLimpio.length < 11) { 
-                inputCPF.classList.add("input-erro"); 
-                temErro = true; 
-            }
-            if (senha === "") { 
-                inputSenha.classList.add("input-erro"); 
-                temErro = true; 
+            const cpfLimpio = inputCPF.value.replace(/\D/g, "");
+            const senhaDigitada = inputSenha.value.trim();
+            
+            if (cpfLimpio.length < 11 || senhaDigitada === "") {
+                alert("Por favor, preencha o CPF e a senha corretamente.");
+                return;
             }
 
-            if (temErro) return;
+            // SIMULAÇÃO DE SUCESSO
+            const tokenSimulado = "jwt_" + Math.random().toString(36).substr(2);
+            localStorage.setItem('token_acesso', tokenSimulado);
+            localStorage.setItem('usuario_nome', "Davi Gusmão");
 
-            try {
-                const response = await fetch(URL_API, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        cpf: cpfLimpio, // Enviando o CPF para a API
-                        senha: senha 
-                    })
-                });
+            btnEntrar.innerText = "Acessando...";
+            btnEntrar.style.opacity = "0.7";
+            btnEntrar.disabled = true;
 
-                const data = await response.json();
-                if (response.ok) {
-                    localStorage.setItem('token_acesso', data.access_token);
-                    window.location.href = "./index.html";
-                } else {
-                    alert(data.detail || "CPF ou Senha incorretos.");
-                    inputCPF.classList.add("input-erro");
-                    inputSenha.classList.add("input-erro");
-                }
-            } catch (err) {
-                alert("Erro ao conectar com o servidor da API.");
-            }
-        };
+            setTimeout(() => {
+                window.location.replace("index.html");
+            }, 500);
+        });
     }
 
-    if (inputSenha) {
-        inputSenha.oninput = () => inputSenha.classList.remove("input-erro");
-    }
+    // Atalho Enter
+    [inputCPF, inputSenha].forEach(input => {
+        input.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                btnEntrar.click();
+            }
+        });
+    });
 };

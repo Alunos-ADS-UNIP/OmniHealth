@@ -2,29 +2,49 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do Especialista - AgendaiFisio</title>
+    <link href="https://googleapis.com" rel="stylesheet">
     <link rel="stylesheet" href="TelaTerapeuta.css">
-    <title>Painel do Especialista - FisioPlan</title>
 </head>
 <body>
-    <div class="titulo-pagina">Gestão de Agenda</div>
+    <div class="titulo-pagina">Gestão de Agenda e Dashboard</div>
+
+    <!-- 1. DASHBOARD ANALÍTICO -->
+    <div class="dashboard-resumo">
+        <div class="card-dash">
+            <span class="label">Pacientes Hoje</span>
+            <strong id="countHoje">0</strong>
+        </div>
+        <div class="card-dash">
+            <span class="label">Total na Semana</span>
+            <strong id="countSemana">0</strong>
+        </div>
+        <div class="card-dash">
+            <span class="label">Total no Mês</span>
+            <strong id="countMes">0</strong>
+        </div>
+    </div>
 
     <main class="container-mestre">
-        <!-- COLUNA 1: BLOQUEIO POR DATA -->
+        <!-- COLUNA 1: GESTÃO DE DISPONIBILIDADE -->
         <section class="card-info">
             <h2>Configurar Disponibilidade</h2>
             <div class="seletor-data">
-                <label>Selecione o Dia para Gerenciar:</label>
-                <input type="date" id="dataGestao" class="input-moderno">
+                <label style="display: block; margin-bottom: 8px; font-weight: 700; color: #64748b; font-size: 0.85rem;">Selecione o Dia para Gerenciar:</label>
+                <input type="date" id="dataGestao" class="input-moderno" style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 1rem; font-family: inherit;">
             </div>
-            <p class="legenda">Clique no cadeado para <strong>Bloquear (🔒)</strong> ou <strong>Liberar (🔓)</strong>.</p>
-            <div id="gridGestao" class="horarios-grid"></div>
+            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 10px;">Clique no cadeado para <strong>Bloquear (🔒)</strong> ou <strong>Liberar (🔓)</strong>.</p>
+            <div id="gridGestao" class="horarios-grid">
+                <!-- Gerado via JS -->
+            </div>
         </section>
 
-        <!-- COLUNA 2: LISTA GERAL (DIA/MÊS) -->
+        <!-- COLUNA 2: PRÓXIMOS PACIENTES (DASHBOARD LIST) -->
         <section class="card-info">
             <h2>Próximos Pacientes</h2>
             <div id="listaGeralPacientes" class="lista-pacientes-geral">
-                <!-- O JS vai listar todos os agendamentos salvos -->
+                <!-- Injetado dinamicamente -->
             </div>
         </section>
     </main>

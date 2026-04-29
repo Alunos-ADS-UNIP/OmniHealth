@@ -1,69 +1,48 @@
-window.onload = function() {
+document.addEventListener("DOMContentLoaded", () => {
     const el = {
         dataInput: document.getElementById("dataGestao"),
         grid: document.getElementById("gridGestao"),
-        listaGeral: document.getElementById("listaGeralPacientes")
+        listaGeral: document.getElementById("listaGeralPacientes"),
+        countHoje: document.getElementById("countHoje"),
+        countSemana: document.getElementById("countSemana"),
+        countMes: document.getElementById("countMes")
     };
 
-    // Grade de 30 em 30 minutos (10h às 18h)
-    const gradeBase = [
-        "10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", 
-        "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", 
-        "17:00", "17:30", "18:00"
-    ];
+    const gradeBase = ["10:00","10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00","14:30",  "15:00", "15:30",  "16:00", "16:30",  "17:00", "17:30",  "18:00"];
 
-    // Define data inicial como hoje
+    // Data inicial como hoje
     el.dataInput.value = new Date().toISOString().split('T')[0];
 
-    const atualizarTudo = () => {
-        const agendaGlobal = JSON.parse(localStorage.getItem('agendaFisioData')) || {};
-        const dataSelecionada = el.dataInput.value;
-
-        // 1. RENDERIZAR GRID DE GESTÃO (BLOQUEIOS)
-        if (!agendaGlobal[dataSelecionada]) {
-            agendaGlobal[dataSelecionada] = {};
-            gradeBase.forEach(h => agendaGlobal[dataSelecionada][h] = { status: "disponivel", paciente: null });
-        }
-
-        el.grid.innerHTML = "";
-        gradeBase.forEach(hora => {
-            const info = agendaGlobal[dataSelecionada][hora];
-            const isBloqueado = info.status === "bloqueado";
-            
-            const btn = document.createElement("button");
-            btn.className = `btn-gestao ${isBloqueado ? 'bloqueado' : 'liberado'}`;
-            btn.innerHTML = isBloqueado ? `🔒 ${hora}` : `🔓 ${hora}`;
-
-            btn.onclick = () => {
-                // Se houver paciente, avisa antes de bloquear
-                if (info.paciente && !isBloqueado) {
-                    if (!confirm(`Existe um agendamento para ${info.paciente}. Deseja bloquear e remover o paciente?`)) return;
-                }
-                agendaGlobal[dataSelecionada][hora].status = isBloqueado ? "disponivel" : "bloqueado";
-                if (!isBloqueado) agendaGlobal[dataSelecionada][hora].paciente = null;
-                
-                localStorage.setItem('agendaFisioData', JSON.stringify(agendaGlobal));
-                atualizarTudo();
-            };
-            el.grid.appendChild(btn);
-        });
-
-        // 2. RENDERIZAR LISTA GERAL DE PACIENTES (SEM FILTRO DE DATA)
+    const atualizarDashboardELista = (agenda) => {
+        const hojeStr = new Date().toISOString().split('T')[0];
+        let totalHoje = 0, totalSemana = 0, totalMes = 0;
+        
         el.listaGeral.innerHTML = "";
         let temPacientes = false;
 
-        // Varre todas as datas do banco de dados
-        Object.keys(agendaGlobal).sort().forEach(data => {
-            Object.keys(agendaGlobal[data]).sort().forEach(hora => {
-                const info = agendaGlobal[data][hora];
+        // Ordenar datas para a lista ficar organizada
+        const datasOrdenadas = Object.keys(agenda).sort();
+
+        datasOrdenadas.forEach(data => {
+            const dataObj = new Date(data);
+            const diffDias = Math.floor((dataObj - new Date(hojeStr)) / (1000 * 60 * 60 * 24));
+
+            Object.keys(agenda[data]).forEach(hora => {
+                const info = agenda[data][hora];
+                
                 if (info.paciente) {
                     temPacientes = true;
-                    const dataFormatada = data.split('-').reverse().join('/');
+                    // Contagem dashboard
+                    if (data === hojeStr) totalHoje++;
+                    if (diffDias >= 0 && diffDias <= 7) totalSemana++;
+                    if (diffDias >= 0 && diffDias <= 30) totalMes++;
+
+                    // Construção da lista lateral
                     el.listaGeral.innerHTML += `
                         <div class="paciente-item-geral">
                             <div class="info">
                                 <strong>${info.paciente}</strong>
-                                <span>${dataFormatada} — ${hora}</span>
+                                <span>📅 ${data.split('-').reverse().join('/')} — ${hora}</span>
                             </div>
                             <div class="status-tag">Confirmado</div>
                         </div>`;
@@ -71,9 +50,45 @@ window.onload = function() {
             });
         });
 
-        if (!temPacientes) el.listaGeral.innerHTML = "<p class='vazio'>Nenhum agendamento encontrado.</p>";
+        el.countHoje.innerText = totalHoje;
+        el.countSemana.innerText = totalSemana;
+        el.countMes.innerText = totalMes;
+        if (!temPacientes) el.listaGeral.innerHTML = "<p class='vazio'>Aguardando novos agendamentos...</p>";
     };
 
-    el.dataInput.onchange = atualizarTudo;
-    atualizarTudo();
-};
+    const carregarTela = () => {
+        const agendaGlobal = JSON.parse(localStorage.getItem('agendaFisioData')) || {};
+        const dataSel = el.dataInput.value;
+
+        if (!agendaGlobal[dataSel]) agendaGlobal[dataSel] = {};
+
+        // Renderiza Grid de Cadeados
+        el.grid.innerHTML = "";
+        gradeBase.forEach(hora => {
+            const info = agendaGlobal[dataSel][hora] || { status: "disponivel", paciente: null };
+            const isBloqueado = info.status === "bloqueado";
+
+            const btn = document.createElement("button");
+            btn.className = `btn-gestao ${isBloqueado ? 'bloqueado' : 'liberado'}`;
+            btn.innerHTML = isBloqueado ? `🔒 ${hora}` : `🔓 ${hora}`;
+
+            btn.onclick = () => {
+                if (info.paciente && !isBloqueado) {
+                    if (!confirm(`Desmarcar o paciente ${info.paciente} e bloquear o horário?`)) return;
+                }
+                
+                const novoStatus = isBloqueado ? "disponivel" : "bloqueado";
+                agendaGlobal[dataSel][hora] = { status: novoStatus, paciente: null };
+                
+                localStorage.setItem('agendaFisioData', JSON.stringify(agendaGlobal));
+                carregarTela();
+            };
+            el.grid.appendChild(btn);
+        });
+
+        atualizarDashboardELista(agendaGlobal);
+    };
+
+    el.dataInput.onchange = carregarTela;
+    carregarTela();
+});

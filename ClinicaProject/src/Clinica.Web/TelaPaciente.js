@@ -1,146 +1,120 @@
-window.onload = function() {
-    // 1. MAPEAMENTO DE ELEMENTOS (IDs do seu HTML)
-    const el = {
-        btnAbrir: document.getElementById("btnAbrir"),
-        modalAgenda: document.getElementById("modalAgenda"),
-        modalSucesso: document.getElementById("modalSucesso"),
-        modalCancel: document.getElementById("modalAvisoCancel"),
-        confirmar: document.getElementById("confirmar"),
-        btnEntendido: document.getElementById("btnEntendido"),
-        statusBox: document.getElementById("statusConsulta"),
-        containerHoras: document.getElementById("containerHorarios"),
-        inputData: document.getElementById("dataAgendamento"), // Campo de data
-        selectTerapeuta: document.getElementById("selectTerapeuta")
-    };
+/* ============================================================
+   1. LÓGICA GLOBAL DE CANCELAMENTO
+   ============================================================ */
 
-    let consultaAtiva = null;
-    let horaSelecionada = "";
+/**
+ * Função global chamada estritamente pelo clique no botão do card.
+ * Armazena os dados no modal e o exibe de forma controlada.
+ */
+window.prepararCancelamento = function(data, hora) {
+    const modal = document.getElementById("modalAvisoCancel");
+    
+    if (modal) {
+        // Garante que o modal esteja fechado antes de configurar novos dados
+        if (modal.open) modal.close();
 
-    // Grade de 30 em 30 minutos (Deve ser a mesma do terapeuta)
-    const gradeHorarios = [
-        "10:00", "10:30", "11:00", "11:30", "12:00", "12:30", 
-        "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", 
-        "16:00", "16:30", "17:00", "17:30", "18:00"
-    ];
-
-    /* ============================================================
-       LOGICA DE ATUALIZAÇÃO DO GRID (SINCRONIA COM TERAPEUTA)
-    ============================================================ */
-    const atualizarGridPaciente = () => {
-        const dataSel = el.inputData.value;
-        if (!dataSel) {
-            el.containerHoras.innerHTML = "<p style='font-size:0.8rem; color:gray; grid-column:1/-1;'>Selecione a data primeiro...</p>";
-            return;
-        }
-
-        // Lê o "banco de dados" compartilhado
-        const agendaGlobal = JSON.parse(localStorage.getItem('agendaFisioData')) || {};
-        const agendaDia = agendaGlobal[dataSel] || {};
-
-        el.containerHoras.innerHTML = "";
-        horaSelecionada = ""; // Reseta seleção ao mudar data
-
-        gradeHorarios.forEach(h => {
-            const info = agendaDia[h] || { status: "disponivel" };
-            const btn = document.createElement("button");
-            btn.innerText = h;
-            btn.type = "button";
-            
-            // Aplica estilos baseados no status definido pelo médico
-            btn.className = `btn-hora ${info.status}`;
-            
-            if (info.status === "bloqueado") {
-                btn.disabled = true;
-            } else {
-                btn.onclick = () => {
-                    document.querySelectorAll('.btn-hora').forEach(b => b.classList.remove('selecionado'));
-                    btn.classList.add('selecionado');
-                    horaSelecionada = h;
-                };
-            }
-            el.containerHoras.appendChild(btn);
-        });
-    };
-
-    // Listeners para atualizar o grid
-    el.inputData.onchange = atualizarGridPaciente;
-
-    el.btnAbrir.onclick = () => {
-        el.inputData.value = ""; // Limpa data ao abrir
-        el.containerHoras.innerHTML = "<p style='font-size:0.8rem; color:gray; grid-column:1/-1;'>Aguardando data...</p>";
-        el.modalAgenda.showModal();
-    };
-
-    /* ============================================================
-       LOGICA DE CONFIRMAÇÃO (SALVAMENTO NO BANCO)
-    ============================================================ */
-    el.confirmar.onclick = () => {
-        const medico = el.selectTerapeuta.value;
-        const dataOriginal = el.inputData.value;
+        // Vincula os dados da consulta específica ao modal
+        modal.dataset.dataParaRemover = data;
+        modal.dataset.horaParaRemover = hora;
         
-        if(!medico || !dataOriginal || !horaSelecionada) {
-            return alert("Por favor, preencha todos os campos!");
-        }
-
-        // 1. CARREGA BANCO, SALVA PACIENTE E BLOQUEIA HORÁRIO
-        let agendaGlobal = JSON.parse(localStorage.getItem('agendaFisioData')) || {};
-        if (!agendaGlobal[dataOriginal]) agendaGlobal[dataOriginal] = {};
-
-        // Salvando na estrutura que o Terapeuta lê
-        agendaGlobal[dataOriginal][horaSelecionada] = {
-            status: "bloqueado",
-            paciente: "Davi Gusmão" // Nome do cliente logado
-        };
-
-        localStorage.setItem('agendaFisioData', JSON.stringify(agendaGlobal));
-
-        // 2. PREPARA DADOS PARA O POPUP DE SUCESSO
-        consultaAtiva = { 
-            medico, 
-            dataOriginal,
-            dataExibicao: dataOriginal.split('-').reverse().join('/'), 
-            hora: horaSelecionada 
-        };
-
-        document.getElementById("dadosConfirmados").innerHTML = `
-            <div class="resumo-sucesso">
-                <p><strong>Especialista:</strong> ${consultaAtiva.medico}</p>
-                <p><strong>Data:</strong> ${consultaAtiva.dataExibicao}</p>
-                <p><strong>Horário:</strong> ${consultaAtiva.hora}</p>
-            </div>
-        `;
-
-        el.modalAgenda.close();
-        el.modalSucesso.showModal();
-    };
-
-    /* ============================================================
-       POS-AGENDAMENTO E CANCELAMENTO
-    ============================================================ */
-    el.btnEntendido.onclick = () => {
-        el.modalSucesso.close();
-        el.statusBox.innerHTML = `
-            <div class="card-agendado" style="background:#f0fdf4; padding:20px; border-radius:15px; border:1px solid #bbf7d0;">
-                <p><strong>Sessão com ${consultaAtiva.medico}</strong></p>
-                <p>Dia ${consultaAtiva.dataExibicao} às ${consultaAtiva.hora}</p>
-                <button id="btnCancelar" class="btn-cancelar" style="width:100%; margin-top:15px;">Desmarcar Consulta</button>
-            </div>
-        `;
-        el.btnAbrir.style.display = "none";
-        document.getElementById("btnCancelar").onclick = () => el.modalCancel.showModal();
-    };
-
-    document.getElementById("confirmarCancelamento").onclick = () => {
-        // REMOVE DO BANCO AO CANCELAR
-        let agendaGlobal = JSON.parse(localStorage.getItem('agendaFisioData')) || {};
-        if (agendaGlobal[consultaAtiva.dataOriginal]) {
-            agendaGlobal[consultaAtiva.dataOriginal][consultaAtiva.hora] = { status: "disponivel", paciente: null };
-        }
-        localStorage.setItem('agendaFisioData', JSON.stringify(agendaGlobal));
-
-        consultaAtiva = null;
-        el.modalCancel.close();
-        el.statusBox.innerHTML = '<p style="color: gray;">Nenhuma sessão agendada.</p>';
-        el.btnAbrir.style.display = "block";
-    };
+        // Abre o modal apenas agora
+        modal.showModal();
+        
+        // Foco no botão de cancelar para acessibilidade
+        const btnManter = modal.querySelector(".btn-outline-full");
+        if (btnManter) btnManter.focus();
+    }
 };
+
+/* ============================================================
+   2. INICIALIZAÇÃO E RENDERIZAÇÃO
+   ============================================================ */
+
+document.addEventListener("DOMContentLoaded", () => {
+    const containerLista = document.getElementById("listaConsultas");
+    const avisoVazio = document.getElementById("statusConsultaVazio");
+    const areaAtalho = document.getElementById("areaAtalho");
+    const btnConfirmarCancel = document.getElementById("confirmarCancelamento");
+
+    /**
+     * Renderiza os cards baseando-se no banco de dados local.
+     */
+    const carregarAgendaDoPaciente = () => {
+        const agendaGlobal = JSON.parse(localStorage.getItem('agendaFisioData')) || {};
+        const nomePacienteLogado = "Davi Gusmão"; 
+
+        // Limpa apenas os cards gerados anteriormente
+        const cardsExistentes = containerLista.querySelectorAll(".card-consulta-item");
+        cardsExistentes.forEach(card => card.remove());
+
+        let encontrouConsulta = false;
+
+        // Ordenação por data para melhor visualização
+        const datasOrdenadas = Object.keys(agendaGlobal).sort();
+
+        datasOrdenadas.forEach(data => {
+            Object.keys(agendaGlobal[data]).forEach(hora => {
+                const info = agendaGlobal[data][hora];
+
+                // Só renderiza se o paciente for o logado e o status for bloqueado
+                if (info.paciente === nomePacienteLogado) {
+                    encontrouConsulta = true;
+
+                    const card = document.createElement("div");
+                    card.className = "card-moderno card-consulta-item";
+                    
+                    card.innerHTML = `
+                        <div class="card-body-info">
+                            <span class="badge">Sessão Confirmada</span>
+                            <h3 class="card-titulo-sessao">Atendimento Fisioterapêutico</h3>
+                            <p class="card-detalhe"><strong>📅 Data:</strong> ${data.split('-').reverse().join('/')}</p>
+                            <p class="card-detalhe"><strong>🕒 Horário:</strong> ${hora}</p>
+                        </div>
+                        <button type="button" class="btn-cancelar-sessao" 
+                                onclick="window.prepararCancelamento('${data}', '${hora}')">
+                            Desmarcar Sessão
+                        </button>
+                    `;
+                    containerLista.appendChild(card);
+                }
+            });
+        });
+
+        // Gerenciamento de visibilidade de placeholders
+        if (avisoVazio) avisoVazio.style.display = encontrouConsulta ? "none" : "block";
+        if (areaAtalho) areaAtalho.style.display = encontrouConsulta ? "block" : "none";
+    };
+
+    /**
+     * Ação de confirmação de exclusão (Botão "Sim" do Modal)
+     */
+    if (btnConfirmarCancel) {
+        btnConfirmarCancel.onclick = () => {
+            const modal = document.getElementById("modalAvisoCancel");
+            const data = modal.dataset.dataParaRemover;
+            const hora = modal.dataset.horaParaRemover;
+
+            if (!data || !hora) return;
+
+            const agendaGlobal = JSON.parse(localStorage.getItem('agendaFisioData')) || {};
+            
+            if (agendaGlobal[data] && agendaGlobal[data][hora]) {
+                // Deleta a entrada e limpa chaves de datas vazias
+                delete agendaGlobal[data][hora];
+                if (Object.keys(agendaGlobal[data]).length === 0) {
+                    delete agendaGlobal[data];
+                }
+            }
+
+            // Persiste no storage e fecha a interface
+            localStorage.setItem('agendaFisioData', JSON.stringify(agendaGlobal));
+            modal.close();
+            
+            // Recarrega a lista dinamicamente
+            carregarAgendaDoPaciente();
+        };
+    }
+
+    // Executa a carga inicial
+    carregarAgendaDoPaciente();
+});

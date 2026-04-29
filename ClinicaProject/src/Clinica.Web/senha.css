@@ -104,7 +104,7 @@ body {
 }
 
 .btn-auth:hover {
-    background: oklch(75.148% 0.17182 150.916);
+    background: #A7C27E;
     transform: translateY(-2px);
     box-shadow: 0 10px 20px rgba(0,0,0,0.1);
 }

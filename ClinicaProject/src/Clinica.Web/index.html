@@ -3,96 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agendar Sessão - AgendaiFisio</title>
     <link rel="stylesheet" href="index.css">
-    <script src="./index.js" defer></script>
-    <title>FisioPlan - Agendamento</title>
 </head>
 <body>
-    <!-- Fundo decorativo sutil -->
-    <div class="background-decor"></div>
-    
-    <div class="titulo-pagina">Agendamento de Sessão</div>
 
-    <main class="Agendamento">
-        <!-- Card Paciente -->
-        <section class="card-info">
-            <div class="badge-status">Paciente Ativo</div>
-            <h2>Paciente</h2>
-            <div class="dados-pessoais">
-                <p><strong>Nome:</strong> <span id="nomePaciente">Davi Gusmão</span></p>
-                <p><strong>Idade:</strong> 19 anos</p>
-            </div>
-        </section>
-
-        <!-- Card Seleção de Fisioterapeuta -->
-        <section class="card-info terapeuta">
-            <div class="badge-status">Clínica de Fisioterapia</div>
-            <h2>Fisioterapeuta</h2>
-            <div class="acao-grupo">
-                <select id="selectTerapeutaPrincipal" class="input-moderno">
-                    <option value="">Selecione o Especialista...</option>
-                    <option value="Dr. Davi Gusmão (Fisioterapia Esportiva)">Dr. Davi Gusmão (Fisioterapia Esportiva)</option>
-                    <option value="Dra. Ana Freitas (RPG / Pilates)">Dra. Ana Freitas (RPG / Pilates)</option>
-                    <option value="Dr. Adolfo Martins (Ortopedia)">Dr. Adolfo Martins (Ortopedia)</option>
-                    <option value="Dra. Nubia Andrade (Neurofuncional)">Dra. Nubia Andrade (Neurofuncional)</option>
-                </select>
-                <button id="btnAbrir" class="btn-primario">Agendar Sessão</button>
-            </div>
-        </section>
-
-        <!-- Modal de Agendamento (Popup) -->
-        <dialog id="modalAgenda" class="modal-moderno">
-            <!-- TOAST DE ERRO MOVIDO PARA DENTRO (Evita o borrão do backdrop) -->
-            <div id="toastErro" class="toast-interno">
-                <span style="font-size: 1.2rem;">⚠️</span>
-                <div>
-                    <strong style="display:block; color:#ef4444; font-size: 0.8rem;">Atenção</strong>
-                    <p id="mensagemErro" style="margin:0; color:#64748b; font-size:0.85rem; font-weight: 600;">Mensagem de erro aqui...</p>
+    <!-- Header com Menu de Conta -->
+    <header class="navbar">
+        <div class="logo">🩺 AgendaiFisio</div>
+        
+        <div class="perfil-container" id="perfilMenu">
+            <div class="avatar">DG</div>
+            <div class="dropdown-conta">
+                <div class="user-header">
+                    <strong>Davi Gusmão</strong>
+                    <span>davigusmao@email.com</span>
                 </div>
+                <hr>
+                <a href="TelaPaciente.html">👤 Meus Dados</a>
+                <a href="TelaPaciente.html">📅 Minhas Consultas</a>
+                <a href="login.html" class="logout">🚪 Sair</a>
             </div>
+        </div>
+    </header>
 
-            <div class="modal-header">
-                <h2>Nova Sessão</h2>
-            </div>
-            <div class="modal-body">
-                <div class="passo">
-                    <label>1. Profissional Responsável</label>
-                    <select id="selectTerapeuta" class="input-moderno">
-                        <option value="">Selecione...</option>
-                        <option value="Dr. Davi Gusmão (Fisioterapia Esportiva)">Dr. Davi Gusmão (Fisioterapia Esportiva)</option>
-                        <option value="Dra. Ana Freitas (RPG / Pilates)">Dra. Ana Freitas (RPG / Pilates)</option>
-                        <option value="Dr. Adolfo Martins (Ortopedia)">Dr. Adolfo Martins (Ortopedia)</option>
-                        <option value="Dra. Nubia Andrade (Neurofuncional)">Dra. Nubia Andrade (Neurofuncional)</option>
+    <main class="container-agendamento">
+        <h1 class="titulo-sessao">Agendamento de Consulta</h1>
+
+        <div class="cards-grid">
+            <!-- Card Informativo do Paciente -->
+            <article class="card-moderno card-paciente">
+                <span class="badge">Paciente Ativo</span>
+                <h2>Dados do Paciente</h2>
+                <div class="info-paciente">
+                    <p><strong>Nome:</strong> Davi Gusmão</p>
+                    <p><strong>Idade:</strong> 19 anos</p>
+                    <p><strong>Status:</strong> Plano Liberado</p>
+                </div>
+            </article>
+
+            <!-- Card de Escolha de Profissional -->
+            <article class="card-moderno card-fisioterapeuta">
+                <span class="badge">Clínica de Fisioterapia</span>
+                <h2>Escolha o Terapeuta/Médico</h2>
+                
+                <div class="campo-selecao">
+                    <label for="selectFisio">Terapeuta/Médico</label>
+                    <select id="selectFisio" class="select-premium">
+                        <option value="" disabled selected>Selecione o Especialista...</option>
+                        <option value="Dr. Davi Vinciaqui (Esportiva)">Dr. Davi Vinciaqui (Esportiva)</option>
+                        <option value="Dra. Ana Caroline (Reabilitação)">Dra. Ana Caroline (Reabilitação)</option>
+                        <option value="Dr. Adolfo Martins (Osteopatia)">Dr. Adolfo Martins (Osteopatia)</option>
                     </select>
                 </div>
-                <div class="passo">
-                    <label>2. Data do Atendimento</label>
-                    <input type="date" id="dataAgendamento" class="input-moderno">
-                </div>
-                <div class="passo">
-                    <label>3. Horários de Reabilitação</label>
-                    <div id="containerHorarios" class="horarios-grid">
-                        <!-- Gerado dinamicamente pelo JS -->
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer" style="padding: 0 35px 35px; display: flex; gap: 15px;">
-                <button id="btnFechar" class="btn-primario" style="background: #f1f5f9; color: #5f7d7b; flex: 1;">Cancelar</button>
-                <button id="confirmarAgendamento" class="btn-primario" style="flex: 1.5;">Confirmar Sessão</button>
-            </div>
-        </dialog>
 
-        <!-- Modal de Sucesso -->
-        <dialog id="modalSucesso" class="modal-moderno success-variant">
-            <div class="icon-check">✓</div>
-            <h2>Sessão Confirmada!</h2>
-            <div id="dadosConfirmados" class="resumo-sucesso">
-                <!-- Informações injetadas pelo JS -->
-            </div>
-            <div style="padding: 0 35px 35px;">
-                <button onclick="location.reload()" class="btn-primario" style="width: 100%;">Voltar ao Início</button>
-            </div>
-        </dialog>
+                <button id="btnAgendar" class="btn-agendar-main">Agendar Sessão</button>
+            </article>
+        </div>
     </main>
+
+    <!-- POPUP 1: MARCAR HORÁRIO -->
+    <dialog id="modalAgenda" class="modal-moderno">
+        <div class="modal-header">
+            <h2>Marcar Horário</h2>
+            <!-- Clique no X agora fecha o modal corretamente -->
+            <button class="btn-fechar-x" type="button" onclick="this.closest('dialog').close()">×</button>
+        </div>
+        <div class="modal-body">
+            <div id="erroModal" class="mensagem-error-modal" style="display: none; background: #fee2e2; color: #dc2626; padding: 10px; border-radius: 8px; margin-bottom: 15px;">
+                <span id="textoErroModal">⚠️ Por favor, escolha a data e o horário.</span>
+            </div>
+
+            <div class="passo">
+                <label>Especialista Confirmado</label>
+                <input type="text" id="modalEspecialista" class="input-premium" readonly style="background: #f1f5f9; cursor: not-allowed;">
+            </div>
+            <div class="passo">
+                <label>Escolha o Dia</label>
+                <!-- onkeydown="return false" impede digitar a data manualmente -->
+                <input type="date" id="modalData" class="input-premium" onkeydown="return false" required>
+            </div>
+            <div class="passo">
+                <label>Horários Disponíveis</label>
+                <div id="gridHorarios" class="horarios-grid">
+                    <!-- Gerado via JS -->
+                </div>
+            </div>
+
+            <button id="btnConfirmarAgendamento" class="btn-confirmar-full" type="button">Confirmar Agendamento</button>
+        </div>
+    </dialog>
+
+    <!-- POPUP 2: SUCESSO -->
+    <dialog id="modalSucesso" class="modal-moderno">
+        <div class="modal-body-centralizado">
+            <div class="icon-sucesso" style="font-size: 4rem; margin-bottom: 1rem;">✅</div>
+            <h2>Agendado com Sucesso!</h2>
+            <p>Confira os detalhes da sua sessão:</p>
+            
+            <div class="resumo-agendamento" style="background: #f8fafc; padding: 20px; border-radius: 16px; margin: 20px 0; text-align: left; border: 1px solid #e2e8f0;">
+                <p style="margin: 5px 0;"><strong>Profissional:</strong> <span id="resumoMedico">--</span></p>
+                <p style="margin: 5px 0;"><strong>Data:</strong> <span id="resumoData">--</span></p>
+                <p style="margin: 5px 0;"><strong>Horário:</strong> <span id="resumoHora">--</span></p>
+            </div>
+
+            <button id="btnProximoPasso" class="btn-confirmar-full" type="button">Continuar</button>
+        </div>
+    </dialog>
+
+    <!-- POPUP 3: NAVEGAÇÃO PÓS-AGENDAMENTO -->
+    <dialog id="modalNavegacao" class="modal-moderno">
+        <div class="modal-body-centralizado">
+            <div class="icon-pergunta" style="font-size: 4rem; margin-bottom: 1rem;">📅</div>
+            <h2>O que deseja fazer?</h2>
+            <p>Seu agendamento foi salvo com segurança.</p>
+            
+            <div class="botoes-duplos" style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
+                <a href="TelaPaciente.html" class="btn-confirmar-full" style="text-decoration: none; text-align: center;">Sim, ver minhas consultas</a>
+                <button onclick="location.reload()" class="btn-outline-full" type="button" style="padding: 15px; border-radius: 12px; border: 2px solid #e2e8f0; background: none; cursor: pointer; font-weight: bold;">Agendar outra sessão</button>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- TOAST DE ERRO TELA PRINCIPAL -->
+    <div id="toastErro" class="toast-erro">
+        <span id="msgErro">⚠️ Selecione um especialista antes de agendar.</span>
+    </div>
+
+    <script src="index.js"></script>
 </body>
 </html>

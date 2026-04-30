@@ -105,3 +105,16 @@ elementosPaciente.confirmarCancelBtn.onclick = () => {
 
 // Inicializa ao carregar a página
 document.addEventListener("DOMContentLoaded", renderizarConsultasPaciente);
+// Escuta mudanças feitas em outras abas e atualiza a interface atual
+window.addEventListener('storage', (e) => {
+    if (e.key === 'consultas_fisio' || e.key === 'agendaFisioData') {
+        // Se estiver na tela do paciente, chama a função de renderizar dele
+        if (typeof renderizarConsultasPaciente === 'function') renderizarConsultasPaciente();
+        
+        // Se estiver no dashboard do terapeuta, chama a função de dashboard
+        if (typeof renderizarDashboard === 'function') renderizarDashboard();
+        
+        // Se estiver na gestão de horários, recarrega a grade
+        if (typeof carregarTela === 'function') carregarTela();
+    }
+});

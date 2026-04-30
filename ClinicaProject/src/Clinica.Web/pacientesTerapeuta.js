@@ -1,35 +1,36 @@
 // ============================================================
-// 1. ESTADO GLOBAL (Sincronizado com LocalStorage)
+// 1. ESTADO GLOBAL E UTILITÁRIOS
 // ============================================================
 const state = {
+    // Busca dados e já realiza a FAXINA AUTOMÁTICA de itens "undefined"
     get consultas() {
-        // Busca dados e limpa entradas corrompidas
-        const dados = JSON.parse(localStorage.getItem("consultas_fisio")) || [];
-        return dados.filter(c => c && c.nome && c.data && c.id);
+        const dadosBrutos = JSON.parse(localStorage.getItem("consultas_fisio")) || [];
+        // Filtra apenas consultas válidas para evitar erros visuais
+        const validas = dadosBrutos.filter(c => c && c.nome && c.data && c.id);
+        
+        // Se encontrou lixo, limpa o LocalStorage silenciosamente
+        if (dadosBrutos.length !== validas.length) {
+            localStorage.setItem("consultas_fisio", JSON.stringify(validas));
+        }
+        return validas;
     },
     get hoje() {
-        // Força o formato DD/MM/YYYY para garantir compatibilidade com o salvamento
-        const d = new Date();
-        const dia = String(d.getDate()).padStart(2, '0');
-        const mes = String(d.getMonth() + 1).padStart(2, '0');
-        const ano = d.getFullYear();
-        return `${dia}/${mes}/${ano}`;
+        return new Date().toLocaleDateString('pt-br');
     },
     get mesAtual() {
+        // Retorna o mês atual formatado (ex: "04")
         return (new Date().getMonth() + 1).toString().padStart(2, '0');
     }
 };
 
 const el = {
-    grid: document.getElementById("gridConsultas"),
+    grid: document.getElementById("gridConsultas"), // Onde aparecem os cards
     dateText: document.getElementById("currentDate"),
-    statsCards: document.querySelectorAll(".stat-value"),
+    statsCards: document.querySelectorAll(".stat-value"), // Os círculos/cards de números
     modalProntuario: document.getElementById("modalProntuario"),
     nomePacienteProntuario: document.getElementById("nomePacienteProntuario"),
     textoProntuario: document.getElementById("textoProntuario"), 
-    btnSalvarProntuario: document.getElementById("btnSalvarProntuario"),
-    btnBloquear: document.getElementById("btnBloquearAgenda"),
-    modalAgenda: document.getElementById("modalAgenda")
+    btnSalvarProntuario: document.getElementById("btnSalvarProntuario")
 };
 
 // ============================================================
@@ -41,42 +42,42 @@ function renderizarDashboard() {
     
     const listaGeral = state.consultas;
     const hojeStr = state.hoje;
+    const mesAtualStr = state.mesAtual;
     
-    // Pegar hora e minutos atuais para comparação
     const agora = new Date();
     const horaAtualMinutos = (agora.getHours() * 60) + agora.getMinutes();
 
     let totalHoje = 0;
     let totalMes = 0;
 
+    // Ordenar por horário para exibição organizada
     const listaOrdenada = listaGeral.sort((a, b) => a.hora.localeCompare(b.hora));
 
     listaOrdenada.forEach(c => {
         const dataConsulta = c.data; 
         const mesConsulta = dataConsulta.split('/')[1];
 
+        // Lógica de Contagem para os Widgets Superiores
         if (dataConsulta === hojeStr) totalHoje++;
-        if (mesConsulta === state.mesAtual) totalMes++;
+        if (mesConsulta === mesAtualStr) totalMes++;
 
+        // Renderiza no grid apenas se for a consulta de HOJE
         if (dataConsulta === hojeStr) {
-            // --- LÓGICA DE STATUS DINÂMICO ---
             const [horaC, minC] = c.hora.split(':').map(Number);
             const consultaMinutos = (horaC * 60) + minC;
-            const tempoEstimadoSessao = 50; // Duração de 50 min
+            const tempoEstimadoSessao = 50;
 
-            let statusHTML = "";
+            let statusClass = "status-azul";
+            let statusTexto = "Agendado";
             
-            if (horaAtualMinutos < consultaMinutos) {
-                // Ainda não chegou o horário
-                statusHTML = `<div class="card-status status-azul">● Agendado</div>`;
-            } else if (horaAtualMinutos >= consultaMinutos && horaAtualMinutos <= (consultaMinutos + tempoEstimadoSessao)) {
-                // Está dentro do intervalo da consulta
-                statusHTML = `<div class="card-status status-amarelo">● Em Atendimento</div>`;
-            } else {
-                // Já passou do horário + tempo de sessão
-                statusHTML = `<div class="card-status status-verde">● Concluído</div>`;
+            // Lógica de Status em tempo real
+            if (horaAtualMinutos >= consultaMinutos && horaAtualMinutos <= (consultaMinutos + tempoEstimadoSessao)) {
+                statusClass = "status-amarelo";
+                statusTexto = "Em Atendimento";
+            } else if (horaAtualMinutos > (consultaMinutos + tempoEstimadoSessao)) {
+                statusClass = "status-verde";
+                statusTexto = "Concluído";
             }
-            // --------------------------------
 
             const card = document.createElement("div");
             card.className = "card-consulta";
@@ -86,9 +87,9 @@ function renderizarDashboard() {
                     <h3 class="card-paciente-nome">${c.nome}</h3>
                     <p class="card-especialista">${c.especialista || "Fisioterapia"}</p>
                 </div>
-                ${statusHTML}
+                <div class="card-status ${statusClass}">● ${statusTexto}</div>
                 <div class="card-acoes">
-                    <button class="btn-card-inline" data-id="${c.id}">
+                    <button class="btn-card-inline" onclick="abrirProntuario('${c.id}')">
                         Ver Prontuário
                     </button>
                     <button class="btn-cancelar-discreto" onclick="cancelarConsulta('${c.id}')" title="Desmarcar">
@@ -100,11 +101,11 @@ function renderizarDashboard() {
         }
     });
 
-    // Atualiza contadores
-    if (el.statsCards.length >= 3) {
+    // Atualiza os widgets superiores (Consultas Hoje, Mês, Total)
+    if (el.statsCards && el.statsCards.length >= 3) {
         el.statsCards[0].innerText = totalHoje;
         el.statsCards[1].innerText = totalMes;
-        el.statsCards[2].innerText = listaGeral.length;
+        el.statsCards[2].innerText = listaGeral.length; // Atendidos/Total
     }
 
     if (totalHoje === 0) {
@@ -113,21 +114,20 @@ function renderizarDashboard() {
 }
 
 // ============================================================
-// 3. AÇÕES E EVENTOS
+// 3. AÇÕES (Global window para funcionar no HTML dinâmico)
 // ============================================================
 
-// Função para o Terapeuta desmarcar uma consulta
 window.cancelarConsulta = (id) => {
-    if (confirm("Deseja desmarcar este paciente? O horário será liberado.")) {
+    if (confirm("Deseja desmarcar este paciente? O horário será liberado em todas as telas.")) {
         const consultas = JSON.parse(localStorage.getItem("consultas_fisio")) || [];
         const consultaParaRemover = consultas.find(c => String(c.id) === String(id));
 
         if (consultaParaRemover) {
-            // 1. Remove da lista de consultas
+            // Remove da lista principal
             const novaLista = consultas.filter(c => String(c.id) !== String(id));
             localStorage.setItem("consultas_fisio", JSON.stringify(novaLista));
 
-            // 2. Libera o horário na Agenda Global para que outros possam marcar
+            // Libera o cadeado na agenda global
             const agendaGlobal = JSON.parse(localStorage.getItem('agendaFisioData')) || {};
             if (agendaGlobal[consultaParaRemover.dataISO]) {
                 delete agendaGlobal[consultaParaRemover.dataISO][consultaParaRemover.hora];
@@ -135,58 +135,59 @@ window.cancelarConsulta = (id) => {
             }
 
             renderizarDashboard();
+            window.dispatchEvent(new Event('storage'));
         }
     }
 };
 
-function bindEvents() {
-    // Clique no botão "Ver Prontuário"
-    document.addEventListener("click", (e) => {
-        const btn = e.target.closest(".btn-card-inline");
-        if (btn) {
-            const idPac = btn.dataset.id;
-            const consulta = state.consultas.find(c => String(c.id) === String(idPac));
+window.abrirProntuario = (id) => {
+    const consultas = state.consultas;
+    const consulta = consultas.find(c => String(c.id) === String(id));
+    
+    if (consulta) {
+        el.nomePacienteProntuario.innerText = consulta.nome;
+        // Recupera evolução anterior se existir, senão mostra a queixa
+        el.textoProntuario.value = consulta.evolucao || `--- QUEIXA DO PACIENTE ---\n${consulta.sintomas || "Nenhum relato."}\n\n--- EVOLUÇÃO MÉDICA ---\n`;
+        
+        el.modalProntuario.showModal();
 
-            if (consulta) {
-                el.nomePacienteProntuario.innerText = consulta.nome;
-                el.textoProntuario.value = `--- QUEIXA DO PACIENTE ---\n${consulta.sintomas || "Nenhum relato."}\n\n--- EVOLUÇÃO MÉDICA ---\n`;
-                el.modalProntuario.showModal();
+        // Configura o botão de salvar para este paciente específico
+        el.btnSalvarProntuario.onclick = () => {
+            const todas = JSON.parse(localStorage.getItem("consultas_fisio")) || [];
+            const index = todas.findIndex(p => String(p.id) === String(id));
+            
+            if (index !== -1) {
+                todas[index].evolucao = el.textoProntuario.value;
+                localStorage.setItem("consultas_fisio", JSON.stringify(todas));
+                
+                el.btnSalvarProntuario.innerText = "⌛ Salvando...";
+                setTimeout(() => {
+                    alert(`✅ Evolução de ${consulta.nome} salva com sucesso!`);
+                    el.btnSalvarProntuario.innerText = "Salvar Evolução";
+                    el.modalProntuario.close();
+                }, 500);
             }
-        }
-    });
+        };
+    }
+};
 
-    el.btnSalvarProntuario?.addEventListener("click", () => {
-        const btn = el.btnSalvarProntuario;
-        btn.innerText = "⌛ Salvando...";
-        btn.disabled = true;
+// ============================================================
+// 4. SINCRONIZAÇÃO E INICIALIZAÇÃO
+// ============================================================
 
-        setTimeout(() => {
-            alert(`✅ Evolução salva com sucesso!`);
-            btn.innerText = "Salvar Evolução";
-            btn.disabled = false;
-            el.modalProntuario.close();
-        }, 800);
-    });
-
-    el.btnBloquear?.addEventListener("click", () => el.modalAgenda.showModal());
-}
-
-// Sincronização entre abas
 window.addEventListener('storage', (e) => {
     if (e.key === 'consultas_fisio' || e.key === 'agendaFisioData') {
-        renderizarDashboard(); 
+        renderizarDashboard();
     }
 });
 
-// ============================================================
-// 4. INICIALIZAÇÃO
-// ============================================================
 document.addEventListener("DOMContentLoaded", () => {
+    // Data no topo da página
     if (el.dateText) {
         el.dateText.innerText = new Date().toLocaleDateString('pt-br', {
             weekday: 'long', day: 'numeric', month: 'long'
         });
     }
+
     renderizarDashboard();
-    bindEvents();
 });

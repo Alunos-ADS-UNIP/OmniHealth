@@ -92,3 +92,23 @@ document.addEventListener("DOMContentLoaded", () => {
     el.dataInput.onchange = carregarTela;
     carregarTela();
 });
+// No JS do Terapeuta, quando ele clicar em "Ver Prontuário"
+function abrirProntuarioTerapeuta(nomePaciente) {
+    const todasConsultas = JSON.parse(localStorage.getItem("consultas_fisio")) || [];
+    
+    // Busca a consulta específica desse paciente
+    const dadosPaciente = todasConsultas.find(c => c.nome === nomePaciente);
+
+    const modal = document.getElementById("modalProntuario");
+    const campoTexto = document.getElementById("textoProntuario"); // Textarea do médico
+    const tituloNome = document.getElementById("nomePacienteProntuario");
+
+    if (dadosPaciente) {
+        tituloNome.innerText = dadosPaciente.nome;
+        
+        // AQUI ESTÁ A MÁGICA: O campo do médico já começa com o que o paciente escreveu
+        campoTexto.value = `--- QUEIXA DO PACIENTE ---\n${dadosPaciente.sintomas}\n\n--- EVOLUÇÃO MÉDICA ---\n`;
+        
+        modal.showModal();
+    }
+}

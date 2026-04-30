@@ -110,6 +110,31 @@
             <button id="btnProximoPasso" class="btn-confirmar-full" type="button">Continuar</button>
         </div>
     </dialog>
+<!-- POPUP 1.5: FORMULÁRIO DE SINTOMAS (TRIAGEM) -->
+<dialog id="modalTriagem" class="modal-moderno">
+    <div class="modal-header">
+        <h2>📋 Conte-nos o que sente</h2>
+        <button class="btn-fechar-x" type="button" onclick="this.closest('dialog').close()">×</button>
+    </div>
+    <div class="modal-body">
+        <!-- DIV DE ERRO ADICIONADA AQUI -->
+        <div id="erroTriagem" class="mensagem-error-modal" style="display: none; background: #fee2e2; color: #dc2626; padding: 10px; border-radius: 8px; margin-bottom: 15px;">
+            <span id="textoErroTriagem">⚠️ Por favor, descreva seus sintomas.</span>
+        </div>
+
+        <p style="color: #64748b; margin-bottom: 15px;">Essas informações ajudam o especialista a se preparar para sua consulta.</p>
+        
+        <div class="passo">
+            <label for="sintomasPaciente">Descrição dos Sintomas / Motivo da Consulta</label>
+            <textarea id="sintomasPaciente" 
+                      style="width: 100%; min-height: 120px; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0; font-family: inherit; resize: vertical;" 
+                      placeholder="Ex: Dor na lombar ao sentar, cansaço excessivo, etc..."></textarea>
+        </div>
+
+        <button id="btnFinalizarTriagem" class="btn-confirmar-full" type="button" style="margin-top: 10px;">Salvar e Confirmar Agendamento</button>
+    </div>
+</dialog>
+
 
     <!-- POPUP 3: NAVEGAÇÃO PÓS-AGENDAMENTO -->
     <dialog id="modalNavegacao" class="modal-moderno">

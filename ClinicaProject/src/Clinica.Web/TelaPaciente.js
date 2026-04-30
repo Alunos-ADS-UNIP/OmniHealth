@@ -1,120 +1,107 @@
 /* ============================================================
-   1. LÓGICA GLOBAL DE CANCELAMENTO
+   LÓGICA DA TELA DO PACIENTE (MEUS AGENDAMENTOS)
    ============================================================ */
 
-/**
- * Função global chamada estritamente pelo clique no botão do card.
- * Armazena os dados no modal e o exibe de forma controlada.
- */
-window.prepararCancelamento = function(data, hora) {
-    const modal = document.getElementById("modalAvisoCancel");
-    
-    if (modal) {
-        // Garante que o modal esteja fechado antes de configurar novos dados
-        if (modal.open) modal.close();
+const pacienteLogado = "Davi Gusmão";
 
-        // Vincula os dados da consulta específica ao modal
-        modal.dataset.dataParaRemover = data;
-        modal.dataset.horaParaRemover = hora;
+const elementosPaciente = {
+    listaConsultas: document.getElementById("listaConsultas"),
+    statusVazio: document.getElementById("statusConsultaVazio"),
+    modalCancel: document.getElementById("modalAvisoCancel"),
+    confirmarCancelBtn: document.getElementById("confirmarCancelamento"),
+    modalSintomas: document.getElementById("modalVerSintomas"),
+    textoSintomas: document.getElementById("textoSintomasPaciente")
+};
+
+let idParaCancelar = null;
+
+const renderizarConsultasPaciente = () => {
+    if (!elementosPaciente.listaConsultas) return;
+
+    // 1. Carrega os dados do LocalStorage
+    const consultas = JSON.parse(localStorage.getItem("consultas_fisio")) || [];
+    
+    // 2. Filtra apenas as consultas deste paciente específico
+    const minhasConsultas = consultas.filter(c => c.nome === pacienteLogado);
+
+    // 3. Controle de estado vazio
+    if (minhasConsultas.length === 0) {
+        elementosPaciente.statusVazio.style.display = "block";
+        // Remove cards antigos se houver
+        const cardsAntigos = document.querySelectorAll('.card-consulta-item');
+        cardsAntigos.forEach(card => card.remove());
+        return;
+    }
+
+    // Oculta o aviso de vazio e limpa a lista para re-renderizar
+    elementosPaciente.statusVazio.style.display = "none";
+    // Remove apenas os cards de consulta, mantendo o esqueleto
+    document.querySelectorAll('.card-consulta-item').forEach(c => c.remove());
+
+    // 4. Criação dos Cards
+    minhasConsultas.forEach(consulta => {
+        const card = document.createElement("div");
+        card.className = "card-moderno card-consulta-item";
         
-        // Abre o modal apenas agora
-        modal.showModal();
+        card.innerHTML = `
+            <div class="card-body-info">
+                <span class="badge">Sessão Confirmada</span>
+                <h3 class="card-titulo-sessao" style="margin: 15px 0 10px 0;">${consulta.especialista}</h3>
+                <div class="info-linha">
+                    <p class="card-detalhe"><strong>📅 Data:</strong> ${consulta.data}</p>
+                    <p class="card-detalhe"><strong>🕒 Horário:</strong> ${consulta.hora}</p>
+                </div>
+            </div>
+            <div class="botoes-stack" style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
+                <button class="btn-agendar-atalho" style="width: 100%; justify-content: center;" 
+                        onclick="verSintomas('${consulta.sintomas}')">
+                    📋 Ver Meus Sintomas
+                </button>
+                <button class="btn-cancelar-sessao" onclick="prepararCancelamento('${consulta.id}')">
+                    Desmarcar Sessão
+                </button>
+            </div>
+        `;
+        elementosPaciente.listaConsultas.appendChild(card);
+    });
+};
+
+// --- FUNÇÕES DE INTERAÇÃO ---
+
+window.verSintomas = (texto) => {
+    elementosPaciente.textoSintomas.innerText = texto;
+    elementosPaciente.modalSintomas.showModal();
+};
+
+window.prepararCancelamento = (id) => {
+    idParaCancelar = id;
+    elementosPaciente.modalCancel.showModal();
+};
+
+elementosPaciente.confirmarCancelBtn.onclick = () => {
+    if (idParaCancelar) {
+        let consultas = JSON.parse(localStorage.getItem("consultas_fisio")) || [];
         
-        // Foco no botão de cancelar para acessibilidade
-        const btnManter = modal.querySelector(".btn-outline-full");
-        if (btnManter) btnManter.focus();
+        // Localiza a consulta para liberar o horário na agenda antes de deletar
+        const consultaRemovida = consultas.find(c => String(c.id) === String(idParaCancelar));
+        
+        if (consultaRemovida) {
+            // 1. Remove da lista de consultas
+            const novasConsultas = consultas.filter(c => String(c.id) !== String(idParaCancelar));
+            localStorage.setItem("consultas_fisio", JSON.stringify(novasConsultas));
+
+            // 2. Libera o horário na agenda global para que outros possam marcar
+            const agendaGlobal = JSON.parse(localStorage.getItem('agendaFisioData')) || {};
+            if (agendaGlobal[consultaRemovida.dataISO]) {
+                delete agendaGlobal[consultaRemovida.dataISO][consultaRemovida.hora];
+                localStorage.setItem('agendaFisioData', JSON.stringify(agendaGlobal));
+            }
+        }
+
+        elementosPaciente.modalCancel.close();
+        renderizarConsultasPaciente(); // Atualiza a tela instantaneamente
     }
 };
 
-/* ============================================================
-   2. INICIALIZAÇÃO E RENDERIZAÇÃO
-   ============================================================ */
-
-document.addEventListener("DOMContentLoaded", () => {
-    const containerLista = document.getElementById("listaConsultas");
-    const avisoVazio = document.getElementById("statusConsultaVazio");
-    const areaAtalho = document.getElementById("areaAtalho");
-    const btnConfirmarCancel = document.getElementById("confirmarCancelamento");
-
-    /**
-     * Renderiza os cards baseando-se no banco de dados local.
-     */
-    const carregarAgendaDoPaciente = () => {
-        const agendaGlobal = JSON.parse(localStorage.getItem('agendaFisioData')) || {};
-        const nomePacienteLogado = "Davi Gusmão"; 
-
-        // Limpa apenas os cards gerados anteriormente
-        const cardsExistentes = containerLista.querySelectorAll(".card-consulta-item");
-        cardsExistentes.forEach(card => card.remove());
-
-        let encontrouConsulta = false;
-
-        // Ordenação por data para melhor visualização
-        const datasOrdenadas = Object.keys(agendaGlobal).sort();
-
-        datasOrdenadas.forEach(data => {
-            Object.keys(agendaGlobal[data]).forEach(hora => {
-                const info = agendaGlobal[data][hora];
-
-                // Só renderiza se o paciente for o logado e o status for bloqueado
-                if (info.paciente === nomePacienteLogado) {
-                    encontrouConsulta = true;
-
-                    const card = document.createElement("div");
-                    card.className = "card-moderno card-consulta-item";
-                    
-                    card.innerHTML = `
-                        <div class="card-body-info">
-                            <span class="badge">Sessão Confirmada</span>
-                            <h3 class="card-titulo-sessao">Atendimento Fisioterapêutico</h3>
-                            <p class="card-detalhe"><strong>📅 Data:</strong> ${data.split('-').reverse().join('/')}</p>
-                            <p class="card-detalhe"><strong>🕒 Horário:</strong> ${hora}</p>
-                        </div>
-                        <button type="button" class="btn-cancelar-sessao" 
-                                onclick="window.prepararCancelamento('${data}', '${hora}')">
-                            Desmarcar Sessão
-                        </button>
-                    `;
-                    containerLista.appendChild(card);
-                }
-            });
-        });
-
-        // Gerenciamento de visibilidade de placeholders
-        if (avisoVazio) avisoVazio.style.display = encontrouConsulta ? "none" : "block";
-        if (areaAtalho) areaAtalho.style.display = encontrouConsulta ? "block" : "none";
-    };
-
-    /**
-     * Ação de confirmação de exclusão (Botão "Sim" do Modal)
-     */
-    if (btnConfirmarCancel) {
-        btnConfirmarCancel.onclick = () => {
-            const modal = document.getElementById("modalAvisoCancel");
-            const data = modal.dataset.dataParaRemover;
-            const hora = modal.dataset.horaParaRemover;
-
-            if (!data || !hora) return;
-
-            const agendaGlobal = JSON.parse(localStorage.getItem('agendaFisioData')) || {};
-            
-            if (agendaGlobal[data] && agendaGlobal[data][hora]) {
-                // Deleta a entrada e limpa chaves de datas vazias
-                delete agendaGlobal[data][hora];
-                if (Object.keys(agendaGlobal[data]).length === 0) {
-                    delete agendaGlobal[data];
-                }
-            }
-
-            // Persiste no storage e fecha a interface
-            localStorage.setItem('agendaFisioData', JSON.stringify(agendaGlobal));
-            modal.close();
-            
-            // Recarrega a lista dinamicamente
-            carregarAgendaDoPaciente();
-        };
-    }
-
-    // Executa a carga inicial
-    carregarAgendaDoPaciente();
-});
+// Inicializa ao carregar a página
+document.addEventListener("DOMContentLoaded", renderizarConsultasPaciente);

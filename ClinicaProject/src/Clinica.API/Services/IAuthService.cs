@@ -4,6 +4,8 @@ namespace Clinica.API.Services
 {
     public interface IAuthService
     {
+        bool    CadastrarUsuario(UserRegisterDTO dados);
+        string? Login(string email, string senha);
         Task<string?> LoginAsync(LoginRequest request);
     }
 }

@@ -1,0 +1,71 @@
+:root {
+    --brand: oklch(60% 0.12 250); /* Azul Profissional */
+    --brand-soft: oklch(60% 0.12 250 / 0.1);
+    --texto: #0f172a;
+    --fundo: #f1f5f9;
+}
+
+body {
+    background: linear-gradient(135deg, #e2e8f0 0%, #f1f5f9 100%);
+    font-family: 'Inter', sans-serif;
+    display: grid;
+    place-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.auth-card {
+    background: #ffffff;
+    padding: 3rem;
+    border-radius: 24px;
+    box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px; /* Um pouco mais largo para campos técnicos */
+    border-left: 10px solid var(--brand); /* Detalhe lateral */
+}
+
+h2 { color: var(--texto); font-weight: 900; letter-spacing: -1px; }
+
+/* Grid para campos que podem ficar lado a lado (ex: CRM e UF) */
+.form-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 15px;
+}
+
+.input-group label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #64748b;
+}
+
+.input-estilizado {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #ffffff;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+}
+
+.input-estilizado:focus {
+    outline: none;
+    border-color: var(--brand);
+    box-shadow: 0 0 0 3px var(--brand-soft);
+}
+
+.btn-auth {
+    width: 100%;
+    padding: 18px;
+    background: var(--texto); /* Botão em cor neutra escura para seriedade */
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-auth:hover { background: var(--brand); }

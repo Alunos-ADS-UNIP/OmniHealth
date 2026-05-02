@@ -1,0 +1,272 @@
+// ============================================================
+// 1. ESTADO GLOBAL
+// ============================================================
+const state = {
+    consultas: [
+        { nome: "Davi Gusmão", medico: "Ana Caroline (Psicóloga)", hora: "09:30", data: "25/10/2026" }
+    ],
+    consultasSemana: [
+        { nome: "Ana Beatriz", hora: "08:00", tipo: "Primeira Vez" },
+        { nome: "Carlos Eduardo", hora: "09:30", tipo: "Retorno" },
+        { nome: "Juliana Silva", hora: "11:00", tipo: "Avaliação" }
+    ]
+};
+
+// ============================================================
+// 2. ELEMENTOS
+// ============================================================
+const el = {
+    grid: document.getElementById("gridConsultas"),
+    dateText: document.getElementById("currentDate"),
+
+    btnAbrir: document.getElementById("btnAbrir"),
+    btnConfirmar: document.getElementById("confirmarAgendamento"),
+
+    modalAgenda: document.getElementById("modalAgenda"),
+    modalSucesso: document.getElementById("modalSucesso"),
+    modalProntuario: document.getElementById("modalProntuario"),
+
+    selectPrincipal: document.getElementById("selectTerapeutaPrincipal"),
+    selectModal: document.getElementById("selectTerapeutaModal"),
+    inputData: document.getElementById("dataAgendamento"),
+    containerHorarios: document.getElementById("containerHorarios"),
+
+    confirmMedico: document.getElementById("confirmMedico"),
+    confirmDataHora: document.getElementById("confirmDataHora"),
+
+    nomePacienteProntuario: document.getElementById("nomePacienteProntuario"),
+    textoProntuario: document.getElementById("textoProntuario"),
+    btnSalvarProntuario: document.getElementById("btnSalvarProntuario")
+};
+
+// ============================================================
+// 3. INIT
+// ============================================================
+document.addEventListener("DOMContentLoaded", () => {
+    init();
+});
+
+function init() {
+    setDate();
+    renderConsultas();
+    bindEvents();
+}
+
+// ============================================================
+// 4. UI - DATA
+// ============================================================
+function setDate() {
+    if (!el.dateText) return;
+
+    const hoje = new Date();
+    el.dateText.innerText = hoje.toLocaleDateString('pt-br', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long'
+    });
+}
+
+// ============================================================
+// 5. RENDERIZAÇÃO
+// ============================================================
+function renderConsultas() {
+    if (!el.grid) return;
+
+    el.grid.innerHTML = "";
+
+    state.consultasSemana.forEach(c => {
+        const card = document.createElement("div");
+        card.className = "card-consulta";
+
+        card.innerHTML = `
+            <div class="card-horario">🕒 ${c.hora}</div>
+            <h3 class="card-paciente-nome">${c.nome}</h3>
+            <div class="card-status">${c.tipo}</div>
+
+            <button class="btn-card-inline" data-paciente="${c.nome}">
+                Ver Prontuário
+            </button>
+        `;
+
+        el.grid.appendChild(card);
+    });
+}
+
+// ============================================================
+// 6. HORÁRIOS
+// ============================================================
+function gerarHorarios() {
+    if (!el.containerHorarios) return;
+
+    el.containerHorarios.innerHTML = "";
+
+    const horarios = ["08:00", "10:00", "14:00", "16:00"];
+
+    horarios.forEach(h => {
+        const wrapper = document.createElement("div");
+
+        const btnHora = document.createElement("button");
+        btnHora.className = "btn-hora";
+        btnHora.innerText = h;
+
+        btnHora.onclick = () => {
+            if (btnHora.classList.contains("indisponivel")) return;
+
+            document.querySelectorAll(".btn-hora")
+                .forEach(b => b.classList.remove("selecionado"));
+
+            btnHora.classList.add("selecionado");
+        };
+
+        const btnBloquear = document.createElement("button");
+        btnBloquear.innerText = "Bloquear";
+
+        btnBloquear.onclick = (e) => {
+            e.stopPropagation();
+
+            const bloqueado = btnHora.classList.toggle("indisponivel");
+
+            btnBloquear.innerText = bloqueado ? "Desbloquear" : "Bloquear";
+            btnBloquear.style.color = bloqueado ? "#22c55e" : "#ef4444";
+        };
+
+        wrapper.appendChild(btnHora);
+        wrapper.appendChild(btnBloquear);
+        el.containerHorarios.appendChild(wrapper);
+    });
+}
+
+// ============================================================
+// 7. AGENDAMENTO
+// ============================================================
+function abrirModalAgendamento() {
+    if (!el.selectPrincipal.value) {
+        alert("Selecione um profissional.");
+        return;
+    }
+
+    el.selectModal.value = el.selectPrincipal.value;
+    gerarHorarios();
+    el.modalAgenda.showModal();
+}
+
+function finalizarAgendamento() {
+    const hora = document.querySelector(".btn-hora.selecionado");
+
+    if (!el.inputData.value || !hora) {
+        alert("Escolha data e horário.");
+        return;
+    }
+
+    const medico = el.selectModal.options[el.selectModal.selectedIndex].text;
+    const data = el.inputData.value.split("-").reverse().join("/");
+
+    state.consultas.push({
+        nome: "Davi Gusmão",
+        medico,
+        hora: hora.innerText,
+        data
+    });
+
+    if (el.confirmMedico) el.confirmMedico.innerText = medico;
+    if (el.confirmDataHora) el.confirmDataHora.innerText = `${data} às ${hora.innerText}`;
+
+    el.modalAgenda.close();
+    el.modalSucesso.showModal();
+}
+
+// ============================================================
+// 8. PRONTUÁRIO
+// ============================================================
+function abrirProntuario(nome) {
+    if (!el.modalProntuario) return;
+
+    el.nomePacienteProntuario.innerText = nome;
+    el.textoProntuario.value = "";
+
+    el.modalProntuario.showModal();
+}
+
+function salvarProntuario() {
+    const btn = el.btnSalvarProntuario;
+    const original = btn.innerText;
+
+    btn.innerText = "⌛ Salvando...";
+    btn.disabled = true;
+
+    setTimeout(() => {
+        alert(`✅ Evolução salva!`);
+        btn.innerText = original;
+        btn.disabled = false;
+        el.modalProntuario.close();
+    }, 800);
+}
+
+// ============================================================
+// 9. EVENTOS
+// ============================================================
+function bindEvents() {
+
+    // Abrir agendamento
+    el.btnAbrir?.addEventListener("click", abrirModalAgendamento);
+
+    // Confirmar
+    el.btnConfirmar?.addEventListener("click", finalizarAgendamento);
+
+    // Salvar prontuário
+    el.btnSalvarProntuario?.addEventListener("click", salvarProntuario);
+
+    // Delegação (cards dinâmicos)
+    document.addEventListener("click", (e) => {
+        const btn = e.target.closest(".btn-card-inline");
+
+        if (btn) {
+            const nome = btn.dataset.paciente;
+            abrirProntuario(nome);
+        }
+    });
+
+    // Navegação ativa
+    document.querySelectorAll("nav a").forEach(link => {
+        link.addEventListener("click", () => {
+            document.querySelectorAll("nav a")
+                .forEach(l => l.classList.remove("active"));
+
+            link.classList.add("active");
+        });
+    });
+}// 1. Função para definir a classe CSS baseada no status
+const definirClasseStatus = (status) => {
+    const s = status.toLowerCase();
+    if (s === 'confirmado') return 'status-confirmado';
+    if (s === 'pendente') return 'status-pendente';
+    if (s === 'bloqueado') return 'status-bloqueado';
+    return '';
+};
+
+// 2. Na sua função de renderizar cards, aplique assim:
+const renderizarCards = () => {
+    grid.innerHTML = "";
+    
+    consultas.forEach(c => {
+        // Chamamos a função para pegar a classe dinâmica
+        const classeStatus = definirClasseStatus(c.status);
+
+        const card = document.createElement("div");
+        card.className = "card-consulta";
+        card.innerHTML = `
+            <div class="card-horario">🕒 ${c.hora}</div>
+            <h3 class="card-paciente-nome">${c.nome}</h3>
+            
+            <!-- Aqui aplicamos a classe dinâmica -->
+            <div class="card-status ${classeStatus}">
+                ${c.status}
+            </div>
+
+            <button class="btn-card-inline" onclick="abrirProntuario('${c.nome}')">
+                Ver Prontuário
+            </button>
+        `;
+        grid.appendChild(card);
+    });
+};

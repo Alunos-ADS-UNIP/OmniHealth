@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Agenda - AgendaiFisio</title>
+    <!-- Importando Fonte Inter (Moderna) -->
+    <link href="https://googleapis.com" rel="stylesheet">
+    <link rel="stylesheet" href="dashboards.css">
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Sidebar lateral que fica fixa na esquerda -->
+        <aside class="sidebar">
+            <div class="logo">🩺 AgendaiFisio</div>
+            <nav>
+                <a href="#" class="active">📅 Consultas</a>
+                <a href="#">👥 Pacientes</a>
+                <a href="#">⚙️ Configurações</a>
+            </nav>
+            <div class="user-info">
+                <strong>Davi Gusmão</strong>
+                <p>Paciente</p>
+            </div>
+        </aside>
+
+        <!-- Área principal onde ficam os cards -->
+        <main class="main-content">
+            <header class="main-header">
+                <div class="title-group">
+                    <h1>Consultas da Semana</h1>
+                    <p id="currentDate">Carregando data...</p>
+                </div>
+
+                <div class="acao-agendamento-topo">
+                    <select id="selectTerapeutaPrincipal" class="select-moderno">
+                        <option value="">Selecione um Profissional...</option>
+                        <option value="Davi">Davi Gusmao Vinciaqui (Psicólogo)</option>
+                        <option value="Ana">Ana Caroline Freitas (Psicóloga)</option>
+                        <option value="Adolfo">Adolfo Martins (Nutricionista)</option>
+                        <option value="Nubia">Nubia Andrade (Geral)</option>
+                    </select>
+                    <button class="btn-novo" id="btnAbrir">+ Agendar Consulta</button>
+                </div>
+            </header>
+
+            <!-- Grid onde os cards aparecem lado a lado -->
+            <div class="consultas-grid" id="gridConsultas">
+                <!-- Injetado via JS -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Modernizado -->
+    <dialog id="modalAgenda" class="modal-moderno">
+        <div class="modal-header">
+            <h2>Novo Agendamento</h2>
+        </div>
+        <div class="modal-body">
+            <div class="passo">
+                <label>Profissional Selecionado</label>
+                <select id="selectTerapeutaModal" class="select-moderno">
+                    <option value="Davi">Davi Gusmao Vinciaqui (Psicólogo)</option>
+                    <option value="Ana">Ana Caroline Freitas (Psicóloga)</option>
+                    <option value="Adolfo">Adolfo Martins (Nutricionista)</option>
+                    <option value="Nubia">Nubia Andrade (Geral)</option>
+                </select>
+            </div>
+            
+            <div class="passo">
+                <label>Escolha a Data</label>
+                <input type="date" id="dataAgendamento" class="input-data">
+            </div>
+
+            <div class="passo">
+                <label>Horários Disponíveis</label>
+                <div id="containerHorarios" class="horarios-grid"></div>
+            </div>
+
+            <div class="botoes-footer">
+                <button onclick="document.getElementById('modalAgenda').close()" class="btn-cancelar">Cancelar</button>
+                <button id="confirmarAgendamento" class="btn-confirmar">Confirmar Agendamento</button>
+            </div>
+        </div>
+    </dialog>
+    <dialog id="modalSucesso" class="modal-sucesso">
+    <div class="modal-conteudo-sucesso">
+        <div class="animacao-sucesso">
+            <span class="circulo-check">✅</span>
+        </div>
+        
+        <h2>Agendamento Confirmado!</h2>
+        <p>Sua consulta foi agendada com sucesso. Confira os detalhes:</p>
+
+        <div class="detalhes-confirmacao">
+            <div class="detalhe-item">
+                <span class="label">Paciente</span>
+                <strong id="confirmPaciente">Davi Gusmão</strong>
+            </div>
+            <div class="detalhe-item">
+                <span class="label">Profissional</span>
+                <strong id="confirmMedico">Davi Gusmao Vinciaqui</strong>
+            </div>
+            <div class="detalhe-item">
+                <span class="label">Data e Hora</span>
+                <strong id="confirmDataHora">26/04/2026 às 09:30</strong>
+            </div>
+        </div>
+
+        <button onclick="document.getElementById('modalSucesso').close()" class="btn-sucesso-ok">Entendido</button>
+    </div>
+</dialog>
+
+    <script src="dashboards.js"></script>
+</body>
+</html>

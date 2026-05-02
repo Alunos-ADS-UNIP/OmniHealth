@@ -1,0 +1,127 @@
+/* DESIGN SYSTEM */
+:root {
+    --primaria: oklch(75% 0.15 145); /* Verde Marca */
+    --texto-titulo: #0f172a;
+    --texto-corpo: #64748b;
+    --bg-gradient: radial-gradient(at top left, #f8fafc, #e2e8f0);
+    --branco: #ffffff;
+    --borda: #e2e8f0;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--bg-gradient);
+    font-family: 'Inter', sans-serif;
+}
+
+/* CONTAINER E CARD */
+.auth-container {
+    width: 100%;
+    max-width: 440px;
+    padding: 20px;
+}
+
+.auth-card {
+    background: var(--branco);
+    padding: 3.5rem 2.5rem;
+    border-radius: 32px;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.08);
+    border: 1px solid var(--branco);
+    text-align: center;
+}
+
+.icon-header {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.auth-header h2 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--texto-titulo);
+    margin-bottom: 10px;
+    letter-spacing: -0.5px;
+}
+
+.auth-header p {
+    color: var(--texto-corpo);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 2rem;
+}
+
+/* INPUTS */
+.input-group {
+    text-align: left;
+    margin-bottom: 1.5rem;
+}
+
+.input-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--texto-titulo);
+    margin-bottom: 8px;
+    padding-left: 4px;
+}
+
+.input-estilizado {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 14px 18px;
+    border-radius: 14px;
+    border: 2px solid var(--borda);
+    background: #f8fafc;
+    font-size: 1rem;
+    transition: var(--transition);
+}
+
+.input-estilizado:focus {
+    outline: none;
+    border-color: var(--primaria);
+    background: var(--branco);
+    box-shadow: 0 0 0 4px oklch(75% 0.15 145);
+}
+
+/* BOTÃO */
+.btn-auth {
+    width: 100%;
+    padding: 18px;
+    border-radius: 16px;
+    border: none;
+    background: var(--texto-titulo);
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: var(--transition);
+    margin-bottom: 1.5rem;
+}
+
+.btn-auth:hover {
+    background: #A7C27E;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+/* RODAPÉ */
+.auth-footer {
+    font-size: 0.9rem;
+    color: var(--texto-corpo);
+}
+
+.auth-footer a {
+    color: var(--primaria);
+    text-decoration: none;
+    font-weight: 700;
+    margin-left: 5px;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
+}

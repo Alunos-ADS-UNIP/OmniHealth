@@ -1,0 +1,294 @@
+/* ============================================================
+   ESTILO MODERNO: CADASTRO TERAPEUTA
+============================================================ */
+
+/* Container Principal */
+.auth-container {
+    width: 100%;
+    max-width: 500px; /* Um pouco mais largo para acomodar dados profissionais */
+    padding: 20px;
+    animation: fadeIn 0.6s cubic-bezier(0.3, 1, 0.4, 1);
+}
+
+/* O Card de Cadastro */
+.auth-card {
+    background: var(--branco);
+    padding: 3rem;
+    border-radius: 32px;
+    box-shadow: var(--sombra-soft);
+    border: 1px solid var(--borda-suave);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Indicador lateral azul para reforçar a identidade do Profissional */
+.auth-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 8px;
+    height: 100%;
+    background: var(--p-profissional);
+}
+
+/* Cabeçalho do Formulário */
+.auth-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.auth-header h2 {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: var(--texto-titulo);
+    letter-spacing: -1px;
+    margin-bottom: 8px;
+}
+
+.auth-header p {
+    font-size: 0.95rem;
+    color: var(--texto-corpo);
+}
+
+/* Grupos de Entrada */
+.input-group {
+    margin-bottom: 1.5rem;
+}
+
+.input-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--texto-titulo);
+    margin-bottom: 8px;
+    padding-left: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.input-estilizado {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 14px 18px;
+    border-radius: 14px;
+    border: 2px solid var(--borda-suave);
+    background: var(--bg-app);
+    font-size: 1rem;
+    color: var(--texto-titulo);
+    transition: var(--transition);
+}
+
+/* Efeito de Foco Profissional (Azul) */
+.input-estilizado:focus {
+    outline: none;
+    border-color: var(--p-profissional);
+    background: var(--branco);
+    box-shadow: 0 0 0 4px oklch(60% 0.12 250 / 0.15);
+}
+
+/* Customização da Checkbox LGPD */
+.lgpd-container {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin: 24px 0;
+    cursor: pointer;
+}
+
+.lgpd-container input { display: none; }
+
+.checkmark {
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--borda-suave);
+    border-radius: 7px;
+    background: var(--bg-app);
+    flex-shrink: 0;
+    position: relative;
+    transition: var(--transition);
+}
+
+.lgpd-container input:checked + .checkmark {
+    background: var(--p-profissional);
+    border-color: var(--p-profissional);
+}
+
+.lgpd-container input:checked + .checkmark::after {
+    content: "✓";
+    position: absolute;
+    color: white;
+    font-weight: 900;
+    font-size: 14px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.lgpd-text {
+    font-size: 0.85rem;
+    color: var(--texto-corpo);
+    line-height: 1.5;
+}
+
+/* Botão de Cadastro Profissional */
+.btn-auth {
+    width: 100%;
+    padding: 18px;
+    border-radius: 16px;
+    border: none;
+    background: var(--texto-titulo); /* Botão preto para alto contraste */
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 10px 20px -5px oklch(0% 0 0 / 0.2);
+}
+
+.btn-auth:hover:not(:disabled) {
+    background: var(--p-profissional);
+    transform: translateY(-2px);
+    box-shadow: 0 15px 30px -10px oklch(60% 0.12 250 / 0.4);
+}
+
+.btn-auth:disabled {
+    background: #cbd5e1;
+    cursor: not-allowed;
+    box-shadow: none;
+    opacity: 0.7;
+}
+
+/* Rodapé */
+.auth-footer {
+    margin-top: 2rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--texto-corpo);
+}
+
+.auth-footer a {
+    color: var(--p-profissional);
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
+}
+body {
+    background: radial-gradient(at top left, #f8fafc, #e2e8f0);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+/* DESIGN SYSTEM */
+:root {
+    --p-profissional: oklch(60% 0.12 250); /* Azul Profissional */
+    --texto-titulo: #0f172a;
+    --texto-corpo: #64748b;
+    --bg-gradient: radial-gradient(at top left, #f8fafc, #e2e8f0);
+    --branco: #ffffff;
+    --borda: #e2e8f0;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--bg-gradient);
+    font-family: 'Inter', sans-serif;
+}
+
+/* CONTAINER DO CARD */
+.auth-container {
+    width: 100%;
+    max-width: 480px;
+    padding: 20px;
+}
+
+.auth-card {
+    background: var(--branco);
+    padding: 3rem;
+    border-radius: 32px;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.08);
+    border: 1px solid var(--branco);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Detalhe lateral azul */
+.auth-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 8px; height: 100%;
+    background: var(--p-profissional);
+}
+
+.auth-header { text-align: center; margin-bottom: 2rem; }
+.auth-header h2 { font-size: 1.8rem; font-weight: 800; color: var(--texto-titulo); margin-bottom: 8px; }
+.auth-header p { color: var(--texto-corpo); font-size: 0.95rem; }
+
+/* INPUTS */
+.input-group { margin-bottom: 1.2rem; }
+.input-group label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; color: var(--texto-titulo); text-transform: uppercase; }
+
+.input-estilizado {
+    width: 100%;
+    padding: 14px;
+    border-radius: 14px;
+    border: 2px solid var(--borda);
+    background: #f8fafc;
+    box-sizing: border-box;
+    transition: var(--transition);
+}
+
+.input-estilizado:focus {
+    outline: none;
+    border-color: var(--p-profissional);
+    background: var(--branco);
+    box-shadow: 0 0 0 4px oklch(60% 0.12 250 / 0.1);
+}
+
+/* CHECKBOX LGPD */
+.lgpd-container { display: flex; gap: 12px; margin: 20px 0; cursor: pointer; align-items: flex-start; }
+.lgpd-container input { display: none; }
+
+.checkmark {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--borda);
+    border-radius: 6px;
+    flex-shrink: 0;
+    position: relative;
+    transition: var(--transition);
+}
+
+.lgpd-container input:checked + .checkmark {
+    background: var(--p-profissional);
+    border-color: var(--p-profissional);
+}
+
+/* BOTÃO */
+.btn-auth {
+    width: 100%;
+    padding: 18px;
+    border-radius: 16px;
+    border: none;
+    background: var(--texto-titulo);
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-auth:disabled { background: #cbd5e1; cursor: not-allowed; opacity: 0.7; }
+.btn-auth:not(:disabled):hover { background: var(--p-profissional); transform: translateY(-2px); }
+
+.auth-footer { margin-top: 2rem; text-align: center; font-size: 0.9rem; }
+.auth-footer a { color: var(--p-profissional); text-decoration: none; font-weight: 700; }

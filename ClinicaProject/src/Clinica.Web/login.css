@@ -1,0 +1,164 @@
+/* ============================================================
+   DESIGN SYSTEM (MODERN & BOLD)
+============================================================ */
+:root {
+    --primary: #A7C27E;
+    --primary-hover: #8da866;
+    --bg-dark: #1a1a1a;
+    --glass-bg: rgba(255, 255, 255, 0.95);
+    --text-main: #2d3436;
+    --text-muted: #636e72;
+    --border-soft: rgba(0, 0, 0, 0.05);
+    --radius-premium: 32px;
+    --shadow-elegant: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+}
+
+/* ============================================================
+   LAYOUT BASE COM GRADIENTE ANIMADO
+============================================================ */
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    height: 100dvb;
+    background: radial-gradient(circle at top right, #A7C27E, #ffffff, #A7C27E, #ffffff);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* ============================================================
+   CONTAINER QUADRADO MODERNO
+============================================================ */
+.login-box {
+    background: var(--glass-bg);
+    inline-size: 90%;
+    max-inline-size: 500px;
+    aspect-ratio: 1 / 1; 
+    padding: 3rem;
+    border-radius: var(--radius-premium);
+    box-shadow: var(--shadow-elegant);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box;
+    transition: transform 0.4s ease;
+    animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.login-box:hover {
+    transform: translateY(-5px);
+}
+
+h2.titulo_login {
+    color: var(--primary);
+    font-size: 30px;
+    font-weight: 800;
+    margin: 0;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.05));
+}
+
+.login-box h2:not(.titulo_login) {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--bg-dark);
+    margin: 0.5rem 0;
+}
+
+.login-box p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin-bottom: 2rem;
+}
+
+/* ============================================================
+   INPUTS E BOTÕES
+============================================================ */
+.input-group {
+    margin-bottom: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.input-group label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.input-estilizado {
+    inline-size: 100%;
+    padding: 1.1rem;
+    border-radius: 16px;
+    border: 1px solid var(--border-soft);
+    background: #f8fafc;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.input-estilizado:focus {
+    background: #fff;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(167, 194, 126, 0.2);
+    outline: none;
+}
+
+.btn-auth {
+    inline-size: 100%;
+    margin-top: 1rem;
+    padding: 1.2rem;
+    border-radius: 16px;
+    border: none;
+    background: var(--bg-dark);
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-auth:hover {
+    background: var(--primary);
+    box-shadow: 0 10px 20px rgba(167, 194, 126, 0.3);
+}
+
+.auth-footer {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    font-size: 0.85rem;
+    text-align: center;
+}
+
+.auth-footer a {
+    color: var(--bg-dark);
+    text-decoration: none;
+    font-weight: 700;
+    transition: 0.3s;
+}
+
+.auth-footer a:hover {
+    color: var(--primary);
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 550px) {
+    .login-box { aspect-ratio: auto; padding: 2.5rem 1.5rem; }
+}

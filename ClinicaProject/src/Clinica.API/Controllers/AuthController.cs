@@ -1,33 +1,39 @@
 using Clinica.API.Models.DTOs;
 using Clinica.API.Services;
 using Microsoft.AspNetCore.Mvc;
-
+ 
 namespace Clinica.API.Controllers
 {
     [ApiController]
-    [Route("api/auth")]
+    [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
-
+ 
         public AuthController(IAuthService authService)
         {
             _authService = authService;
         }
-
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginRequest request)
+ 
+        [HttpPost("register")]
+        public IActionResult Register([FromBody] UserRegisterDTO model)
         {
-            var token = await _authService.LoginAsync(request);
-
-            if (token is null)
-                return Unauthorized(new { mensagem = "E-mail ou senha inválidos." });
-
-            return Ok(new
+            try
             {
-                token,
-                tipo = "Bearer"
-            });
+                var sucesso = _authService.CadastrarUsuario(model);
+                if (!sucesso) return BadRequest("Não foi possível criar o usuário.");
+                return Ok("Usuário criado com sucesso!");
+            }
+            catch (ArgumentException ex)         { return BadRequest(ex.Message); }
+            catch (InvalidOperationException ex) { return Conflict(ex.Message); }
+        }
+ 
+        [HttpPost("login")]
+        public IActionResult Login([FromBody] UserLoginDTO model)
+        {
+            var token = _authService.Login(model.Email, model.Password);
+            if (token == null) return Unauthorized("E-mail ou senha inválidos.");
+            return Ok(new { token });
         }
     }
 }

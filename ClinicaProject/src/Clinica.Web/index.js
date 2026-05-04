@@ -15,6 +15,7 @@ const elements = {
     modalData: document.getElementById('modalData'),
     gridHorarios: document.getElementById('gridHorarios'),
     btnConfirmarAgendamento: document.getElementById('btnConfirmarAgendamento'),
+    nomePaciente: document.getElementById('nomePaciente'),
     
     // Alertas de Erro
     erroModal: document.getElementById('erroModal'),

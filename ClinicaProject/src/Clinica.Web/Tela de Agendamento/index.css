@@ -188,7 +188,7 @@ body {
     border: 2px solid #f1f5f9;
     background: #f8fafc;
     font-size: 20px;
-    font-weight: 600;
+    font-weight: 300;
     outline: none;
     transition: var(--transition);
 }

@@ -23,12 +23,12 @@ const elements = {
     erroTriagem: document.getElementById('erroTriagem'),
     
     // Inputs e Resumo
-    inputSintomas: document.getElementById('sintomasPaciente'),
     btnFinalizarTriagem: document.getElementById('btnFinalizarTriagem'),
     resumoMedico: document.getElementById('resumoMedico'),
     resumoData: document.getElementById('resumoData'),
     resumoHora: document.getElementById('resumoHora'),
-    btnProximoPasso: document.getElementById('btnProximoPasso')
+    btnProximoPasso: document.getElementById('btnProximoPasso'),
+    tiposSintomas: document.getElementById('tiposSintomas')
 };
 
 let horaSelecionada = null;
@@ -44,7 +44,6 @@ const getHojeISO = () => {
 const resetarErros = () => {
     elements.erroModal.style.display = "none";
     elements.erroTriagem.style.display = "none";
-    elements.inputSintomas.style.borderColor = "#e2e8f0";
 };
 
 // --- 3. LOGICA DE ABERTURA ---
@@ -96,6 +95,8 @@ elements.modalData.onchange = () => {
         btn.type = "button";
         btn.className = "btn-hora";
         
+
+        //BLOQUEIA HORARIO JÁ SELECIONADO//
         if (isPassado) {
             btn.classList.add("encerrado"); 
             btn.disabled = true;
@@ -133,14 +134,7 @@ elements.btnConfirmarAgendamento.onclick = () => {
 
 // PASSO B: Validação Triagem -> Salva e Sucesso
 elements.btnFinalizarTriagem.onclick = () => {
-    const sintomas = elements.inputSintomas.value.trim();
 
-    if (!sintomas) {
-        elements.erroTriagem.style.display = "block";
-        elements.inputSintomas.style.borderColor = "#dc2626";
-        elements.inputSintomas.focus();
-        return;
-    }
 
     const dataRaw = elements.modalData.value;
     const dataFormatada = dataRaw.split("-").reverse().join("/");
@@ -152,7 +146,6 @@ elements.btnFinalizarTriagem.onclick = () => {
         data: dataFormatada,
         dataISO: dataRaw,
         hora: horaSelecionada,
-        sintomas: sintomas,
         status: "Confirmado"
     };
 

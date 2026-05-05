@@ -121,33 +121,21 @@
         <div id="erroTriagem" class="mensagem-error-modal" style="display: none; background: #fee2e2; color: #dc2626; padding: 10px; border-radius: 8px; margin-bottom: 15px;">
             <span id="textoErroTriagem">⚠️ Por favor, descreva seus sintomas.</span>
         </div>
-                    <div class="input">
-                <input type="text" name="TESTE" id="nomePaciente">Nome Paciente:</input>
-                <input type="text">Data de Nascimento:
-
-
-
-
-            </div>
+    </div>
 
         <p style="color: #64748b; margin-bottom: 15px;">Essas informações ajudam o especialista a se preparar para sua consulta.</p>
         
         <div class="passo">
-            <label for="sintomasPaciente">Descrição dos Sintomas / Motivo da Consulta</label>
-            <textarea id="sintomasPaciente" 
-                      
-                    style="width: 100%; min-height: 120px; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0; font-family: inherit; resize: vertical;" 
-                    placeholder="Ex: Dor na lombar ao sentar, cansaço excessivo, etc..."></textarea>
-                 <div class="campo-selecao">
-                    <label for="selectFisio">Sintomas</label>
-                    <select id="selectFisio" class="select-premium">
-                        <option value="" disabled selected>Selecione o Especialista...</option>
-                        <option value="Dr. Davi Vinciaqui (Esportiva)">Dr. Davi Vinciaqui (Esportiva)</option>
-                        <option value="Dra. Ana Caroline (Reabilitação)">Dra. Ana Caroline (Reabilitação)</option>
-                        <option value="Dr. Adolfo Martins (Osteopatia)">Dr. Adolfo Martins (Osteopatia)</option>
-                    </select>
-                </div>
+               <div class="campo-selecao">
+        <label for="tiposSintomas">Sintomas</label>
+            <select class="select-premium" name="Sintomas">
+                    <option value="" disabled selected>Selecione o seu Sintomas</option>
+                    <option value="Dor de cabeça">Dor de cabeça</option>
+                    <option value="Dor na  lombar">Dor na parte Lombar</option>
+                    <option value="Dor nas costas ">Dor nas costas</option>
+            </select>
         </div>
+    </div>
 
         <button id="btnFinalizarTriagem" class="btn-confirmar-full" type="button" style="margin-top: 10px;">Salvar e Confirmar Agendamento</button>
     </div>
@@ -162,7 +150,7 @@
             <p>Seu agendamento foi salvo com segurança.</p>
             
             <div class="botoes-duplos" style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
-                <a href="TelaPaciente.html" class="btn-confirmar-full" style="text-decoration: none; text-align: center;">Sim, ver minhas consultas</a>
+                <a href="../Tela Consulta Paciente/TelaPaciente.html" class="btn-confirmar-full" style="text-decoration: none; text-align: center;">Sim, ver minhas consultas</a>
                 <button onclick="location.reload()" class="btn-outline-full" type="button" style="padding: 15px; border-radius: 12px; border: 2px solid #e2e8f0; background: none; cursor: pointer; font-weight: bold;">Agendar outra sessão</button>
             </div>
         </div>

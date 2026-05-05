@@ -7,7 +7,7 @@ const elements = {
     modalAgenda: document.getElementById('modalAgenda'),
     modalSucesso: document.getElementById('modalSucesso'),
     modalNavegacao: document.getElementById('modalNavegacao'),
-    
+    modalSintomas: document.getElementById('modalSintomas'),
     modalEspecialista: document.getElementById('modalEspecialista'),
     modalData: document.getElementById('modalData'),
     gridHorarios: document.getElementById('gridHorarios'),
@@ -52,6 +52,7 @@ elements.btnAgendarPrincipal.onclick = () => {
 
     document.body.style.overflow = 'hidden';
     elements.modalAgenda.showModal();
+    elements.modalSintomas.showModal();
 };
 
 // --- 3. RENDERIZAÇÃO DE HORÁRIOS (LOGICA DE TEMPO REAL E BLOQUEIOS) ---
@@ -170,6 +171,11 @@ elements.btnProximoPasso.onclick = () => {
         if(elements.modalNavegacao) elements.modalNavegacao.showModal();
     }, 150);
 };
+    elements.btnConfirmarAgendamento.onclick = () =>{
+        setTimeout(() => {
+            if(elements.btnConfirmarAgendamento) elements.modalSintomas.showModal();
+        })
+    }
 
 const monitorarFechamento = (modal) => {
     if(!modal) return;

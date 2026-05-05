@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agendar Sessão - AgendaiFisio</title>
+    <link rel="stylesheet" href="dashboards.css">
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
@@ -94,6 +95,25 @@
             <button id="btnConfirmarAgendamento" class="btn-confirmar-full" type="button">Confirmar Agendamento</button>
         </div>
     </dialog>
+
+    <!--MODAL SINTOMAS PACIENTE-->
+    <dialog id="modalSintomas" class="modal-moderno">
+        <div class="modal-header">Digite seus dados e no Final seus Sintomas.
+            <button class="btn-fechar-x" type="button" onclick="this.closest('dialog').close()">x</button>
+        </div>
+        <!--CAMPOS PERGUNTAS PACIENTE SINTOMAS-->
+               <select id="selectFisio" class="select-premium">
+                    <option value="" disabled selected>Selecione os seus sintomas...</option>
+                    <option value="Dores de Cabeça:">Dor de Cabeça</option>
+                    <option value="Nauseas">Nauseas Constantes</option>
+                    <option value="Dores Lombares">Dores na parte da Lombar</option>
+               </select>
+        <div class="campos_perguntas">
+            <textarea  id="textoProntuario" class="input-prontuario" placeholder="Descreva seus sintomas nesse campo para ajudar o nosso Terapeuta...">
+
+            </textarea>
+        </div>
+     </dialog>
 
     <!-- POPUP 2: SUCESSO -->
     <dialog id="modalSucesso" class="modal-moderno">

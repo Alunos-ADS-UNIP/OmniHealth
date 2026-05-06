@@ -363,3 +363,18 @@ footer button, .body-footer-button { display: none !important; }
     border-color: var(--brand) !important;
     transform: scale(1.05);
 }
+.input-protuario{
+    width: 100%;
+    min-height: 200px;
+    padding: 1.5rem;
+    border-radius: 16px;
+    border: 2px solid var(--border);
+    background: #fcfcfd;
+    font-family: inherit;
+    font-size: 1rem;
+    line-height: 1.6;
+    resize: vertical;
+    transition: var(--transition);
+
+
+}
